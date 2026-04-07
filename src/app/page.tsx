@@ -561,12 +561,12 @@ function AboutSection() {
 
 /* ─── Services Section ─── */
 const servicesData = [
-  { num: "01", title: "BRANDING", desc: "BRAND STRATEGY + IDENTITY" },
-  { num: "02", title: "WEB DESIGN & DEVELOPMENT", desc: "WORDPRESS + HTML + NEXT & REACT JS" },
-  { num: "03", title: "GRAPHIC DESIGNING", desc: "PHOTOSHOP + ILLUSTRATOR + INDESIGN" },
-  { num: "04", title: "MOTION GRAPHICS", desc: "AFTER EFFECTS" },
-  { num: "05", title: "PRESENTATION DESIGN", desc: "POWERPOINT + GOOGLE SLIDES" },
-  { num: "06", title: "PACKAGING", desc: "PRODUCT" },
+  { num: "01", title: "Branding", desc: "Brand strategy + identity" },
+  { num: "02", title: "Web design & development", desc: "WordPress + HTML + Next & React JS" },
+  { num: "03", title: "Graphic designing", desc: "Photoshop + Illustrator + InDesign" },
+  { num: "04", title: "Motion graphics", desc: "After Effects" },
+  { num: "05", title: "Presentation design", desc: "PowerPoint + Google Slides" },
+  { num: "06", title: "Packaging", desc: "Product" },
 ];
 
 function ServicesSection() {
@@ -617,10 +617,10 @@ function ServicesSection() {
               <span className="text-[#00ff00] font-medium mb-1.5 md:mb-2 text-sm md:text-base tracking-[0.05em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 {service.num}
               </span>
-              <h3 className="text-white font-bold tracking-wide uppercase text-[1.4rem] md:text-[2rem] leading-tight mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+              <h3 className="text-white font-bold tracking-wide text-[1.4rem] md:text-[2rem] leading-tight mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 {service.title}
               </h3>
-              <p className="text-gray-300 text-[0.65rem] md:text-xs uppercase tracking-[0.1em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+              <p className="text-white text-[0.65rem] md:text-xs tracking-[0.1em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 {service.desc}
               </p>
             </motion.div>
@@ -633,13 +633,13 @@ function ServicesSection() {
 
 /* ─── Projects Section ─── */
 const projectsList = [
-  { num: "01", title: "BRANDING", icon: "/branding.svg" },
-  { num: "02", title: "WEB DESIGN &\nDEVELOPMENT", icon: "/Web design.svg" },
-  { num: "03", title: "GRAPHIC\nDESIGNING", icon: "/Graphic design.svg" },
-  { num: "04", title: "MOTION\nGRAPHICS", icon: "/motion graphics.svg" },
-  { num: "05", title: "PRESENTATION\nDESIGN", icon: "/presentation design.svg" },
-  { num: "06", title: "PACKAGING", icon: "/packaging.svg" },
-  { num: "07", title: "VIDEO EDITING", icon: "/video editing.svg" },
+  { num: "01", title: "Branding", icon: "/branding.svg" },
+  { num: "02", title: "Web design &\ndevelopment", icon: "/Web design.svg" },
+  { num: "03", title: "Graphic\ndesigning", icon: "/Graphic design.svg" },
+  { num: "04", title: "Motion\ngraphics", icon: "/motion graphics.svg" },
+  { num: "05", title: "Presentation\ndesign", icon: "/presentation design.svg" },
+  { num: "06", title: "Packaging", icon: "/packaging.svg" },
+  { num: "07", title: "Video editing", icon: "/video editing.svg" },
 ];
 
 function ProjectCard({ project, index }: any) {
@@ -662,7 +662,7 @@ function ProjectCard({ project, index }: any) {
         <span className="font-bold text-xl md:text-[1.7rem] leading-none tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", color: "#00dd00" }}>
           {project.num}
         </span>
-        <h3 className={`font-bold text-xl md:text-[1.9rem] uppercase whitespace-pre-line leading-[1.1] tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <h3 className={`font-bold text-xl md:text-[1.9rem] whitespace-pre-line leading-[1.1] tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
           {project.title}
         </h3>
       </div>
@@ -709,13 +709,13 @@ function ProjectsSection() {
 
 /* ─── Design Process Section ─── */
 const processSteps = [
-  { num: "01", title: "UNDERSTAND THE BRIEF" },
-  { num: "02", title: "RESEARCH" },
-  { num: "03", title: "BRAINSTORM & SKETCH" },
-  { num: "04", title: "CREATE THE DESIGN" },
-  { num: "05", title: "REVIEW & REFINE" },
-  { num: "06", title: "PRESENT TO CLIENT" },
-  { num: "07", title: "FINAL EXPORT & DELIVERY" },
+  { num: "01", title: "Understand the brief" },
+  { num: "02", title: "Research" },
+  { num: "03", title: "Brainstorm & sketch" },
+  { num: "04", title: "Create the design" },
+  { num: "05", title: "Review & refine" },
+  { num: "06", title: "Present to client" },
+  { num: "07", title: "Final export & delivery" },
 ];
 
 function DesignProcessSection() {
@@ -769,7 +769,7 @@ function DesignProcessSection() {
                     <span className="block text-[#00ff00] text-xs md:text-sm mb-1 font-semibold tracking-widest uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>
                       {step.num}
                     </span>
-                    <h3 className="text-white font-bold text-base md:text-[1.25rem] uppercase tracking-wide leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                    <h3 className="text-white font-bold text-base md:text-[1.25rem] tracking-wide leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
                       {step.title}
                     </h3>
                   </div>
