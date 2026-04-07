@@ -303,7 +303,7 @@ function HeroSection() {
   return (
     <section
       id="home"
-      className={`relative overflow-x-visible transition-all duration-500 ${isDark
+      className={`relative w-screen max-w-[1728px] mx-auto overflow-x-visible transition-all duration-500 ${isDark
         ? 'bg-gradient-to-br from-[#002a11] via-[#001709] to-[#000a04]'
         : 'bg-[#f7f7f7]'
         }`}
@@ -982,19 +982,21 @@ export default function App() {
   return (
     <ThemeContext.Provider value={isDark}>
       <div className={`min-h-screen w-full overflow-x-clip transition-colors duration-500 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}>
-        <Preloader onComplete={() => setLoaded(true)} />
-        <style>{`
-          html { scroll-behavior: smooth; }
-        `}</style>
-        <HeroSection />
-        <SkillsStrip />
-        <StatsSection />
-        <AboutSection />
-        <ServicesSection />
-        <ProjectsSection />
-        <DesignProcessSection />
-        <DesignToolsSection />
-        <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
+        <div className="w-full max-w-[1728px] mx-auto overflow-x-clip">
+          <Preloader onComplete={() => setLoaded(true)} />
+          <style>{`
+            html { scroll-behavior: smooth; }
+          `}</style>
+          <HeroSection />
+          <SkillsStrip />
+          <StatsSection />
+          <AboutSection />
+          <ServicesSection />
+          <ProjectsSection />
+          <DesignProcessSection />
+          <DesignToolsSection />
+          <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
+        </div>
       </div>
     </ThemeContext.Provider>
   );
