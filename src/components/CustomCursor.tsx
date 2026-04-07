@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useSpring, useMotionValue } from "motion/react";
 
 export function CustomCursor() {
@@ -12,11 +12,29 @@ export function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [cursorText, setCursorTextState] = useState("");
   const [cursorShape, setCursorShape] = useState<"circle" | "rounded">("circle");
+  const lastMouseX = useRef(-100);
+  const lastMouseY = useRef(-100);
 
   useEffect(() => {
+    const updateCursorMetaFromPoint = (x: number, y: number) => {
+      const el = document.elementFromPoint(x, y) as HTMLElement | null;
+      const dataTarget = el?.closest("[data-cursor-text]") as HTMLElement | null;
+
+      if (dataTarget?.dataset.cursorText) {
+        setCursorTextState(dataTarget.dataset.cursorText);
+        setCursorShape((dataTarget.dataset.cursorShape as "circle" | "rounded") || "circle");
+      } else {
+        setCursorTextState("");
+        setCursorShape("circle");
+      }
+    };
+
     const moveCursor = (e: MouseEvent) => {
+      lastMouseX.current = e.clientX;
+      lastMouseY.current = e.clientY;
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
+      updateCursorMetaFromPoint(e.clientX, e.clientY);
     };
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -40,8 +58,7 @@ export function CustomCursor() {
       }
     };
     const handleScroll = () => {
-      setIsHovering(false);
-      setCursorTextState("");
+      updateCursorMetaFromPoint(lastMouseX.current, lastMouseY.current);
     };
     window.addEventListener("mousemove", moveCursor);
     window.addEventListener("mouseover", handleMouseOver);

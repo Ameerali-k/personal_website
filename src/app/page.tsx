@@ -609,6 +609,8 @@ function ServicesSection() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
               className="flex flex-col py-8 border-b border-white/20 last:border-b-0 cursor-none"
+              data-cursor-text={service.title}
+              data-cursor-shape="rounded"
               onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: service.title, shape: "rounded" } }))}
               onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
             >
@@ -646,6 +648,8 @@ function ProjectCard({ project, index }: any) {
     <a
       href={`/projects/${project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
       className={`block relative w-[280px] sm:w-[340px] md:w-[420px] h-[38vh] md:h-[55vh] min-h-[280px] md:min-h-[440px] max-h-[600px] flex-shrink-0 rounded-[28px] md:rounded-[32px] overflow-hidden p-6 sm:p-10 border-[1.5px] border-[#00ff00] text-left shadow-[0_10px_40px_rgba(0,0,0,0.12)] group cursor-none transition-all duration-500 ${isDark ? 'bg-[#141827]' : 'bg-white'}`}
+      data-cursor-text="Explore"
+      data-cursor-shape="circle"
       onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Explore", shape: "circle" } }))}
       onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
     >
