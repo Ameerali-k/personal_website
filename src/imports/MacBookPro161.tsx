@@ -203,16 +203,16 @@ function Group1() {
   return (
     <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0">
       <div className="col-1 ml-0 mt-0 relative row-1 size-[72.92px]">
-        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={imgEllipse5} width="72.92" />
+        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={String((imgEllipse5 as any).src || imgEllipse5)} width="72.92" />
       </div>
       <div className="col-1 ml-[45.48px] mt-0 relative row-1 size-[72.92px]">
-        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={imgEllipse6} width="72.92" />
+        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={String((imgEllipse6 as any).src || imgEllipse6)} width="72.92" />
       </div>
       <div className="col-1 ml-[89.74px] mt-0 relative row-1 size-[72.92px]">
-        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={imgEllipse7} width="72.92" />
+        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={String((imgEllipse7 as any).src || imgEllipse7)} width="72.92" />
       </div>
       <div className="col-1 ml-[140.79px] mt-0 relative row-1 size-[72.92px]">
-        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={imgEllipse8} width="72.92" />
+        <img alt="" className="absolute block max-w-none size-full" height="72.92" src={String((imgEllipse8 as any).src || imgEllipse8)} width="72.92" />
       </div>
     </div>
   );
@@ -245,7 +245,7 @@ function Group4() {
       </div>
       <div className="-translate-x-1/2 absolute h-[568px] left-1/2 top-[384.45px] w-[520px]" data-name="WhatsApp Image 2026-03-16 at 11.40.48 AM 2">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[144%] left-[-4.79%] max-w-none top-[-16.58%] w-[104.71%]" src={imgWhatsAppImage20260316At114048Am2} />
+          <img alt="" className="absolute h-[144%] left-[-4.79%] max-w-none top-[-16.58%] w-[104.71%]" src={String((imgWhatsAppImage20260316At114048Am2 as any).src || imgWhatsAppImage20260316At114048Am2)} />
         </div>
       </div>
       <Round />
@@ -253,7 +253,7 @@ function Group4() {
       <p className="-translate-x-1/2 absolute font-['Nova_Square:Book',sans-serif] leading-[127px] left-[calc(50%-0.5px)] not-italic text-[#3b3b3b] text-[124px] text-center top-[243.44px] uppercase whitespace-nowrap">Graphic Designer</p>
       <p className="-translate-x-1/2 absolute font-['Outfit:Medium',sans-serif] font-medium leading-[45px] left-[calc(50%+35.64px)] text-[#1d2431] text-[42px] text-center top-[151.59px] tracking-[-0.84px] whitespace-nowrap">My name is Ameerali, I am a</p>
       <div className="absolute left-[579.36px] size-[53.93px] top-[147.12px]" data-name="clapping_13106954 1">
-        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgClapping131069541} />
+        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={String((imgClapping131069541 as any).src || imgClapping131069541)} />
       </div>
     </div>
   );
@@ -283,7 +283,7 @@ function Logo() {
     <div className="-translate-x-1/2 absolute backdrop-blur-[7.95px] content-stretch flex gap-[4px] items-center justify-center left-[calc(50%-735.61px)] px-[17px] py-[14px] rounded-[10px] top-[44.38px]" data-name="logo">
       <div aria-hidden="true" className="absolute border border-[#1d2431] border-solid inset-0 pointer-events-none rounded-[10px]" />
       <div className="relative shrink-0 size-[43.785px]">
-        <img alt="" className="absolute block max-w-none size-full" height="43.785" src={imgEllipse12} width="43.785" />
+        <img alt="" className="absolute block max-w-none size-full" height="43.785" src={String((imgEllipse12 as any).src || imgEllipse12)} width="43.785" />
       </div>
       <p className="font-['Outfit:Bold',sans-serif] font-bold leading-[19px] relative shrink-0 text-[#1d2431] text-[19px] text-center uppercase whitespace-nowrap">Ameerali</p>
     </div>
