@@ -86,7 +86,7 @@ export function ContactSection() {
           className="w-full md:w-[60%] flex flex-col py-4 md:py-8 pr-0 md:pr-4"
         >
           <AnimatedHeading
-            text="Let's get in touch"
+            text="Let's Get in Touch"
             className={`font-semibold text-[2.4rem] md:text-[3.2rem] mb-10 md:mb-12 leading-none flex md:justify-start justify-center flex-wrap ${isDark ? 'text-white' : 'text-black'}`}
             style={{ fontFamily: "'Outfit', sans-serif" }}
           />

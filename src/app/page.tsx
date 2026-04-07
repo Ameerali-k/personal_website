@@ -533,7 +533,7 @@ function AboutSection() {
         className="max-w-[1100px] mx-auto"
       >
         <AnimatedHeading
-          text="About me"
+          text="About Me"
           className={`mb-10 font-semibold text-center flex justify-center ${isDark ? 'text-white' : 'text-black'}`}
           style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(2rem, 3.5vw, 3rem)" }}
         />
@@ -687,7 +687,7 @@ function ProjectsSection() {
       <div className="sticky top-0 h-screen flex flex-col items-center justify-between overflow-hidden pt-16 pb-32 md:pt-24 md:pb-48">
         <div className="max-w-[1200px] w-full mx-auto px-6 mb-8 md:mb-16 text-center">
           <AnimatedHeading
-            text="Handpicked projects"
+            text="Handpicked Projects"
             className={`font-semibold text-[2.5rem] md:text-[3.2rem] mb-6 max-w-[800px] mx-auto flex justify-center flex-wrap ${isDark ? 'text-white' : 'text-black'}`}
             style={{ fontFamily: "'Outfit', sans-serif", lineHeight: 1.1 }}
           />
@@ -730,7 +730,7 @@ function DesignProcessSection() {
   return (
     <section className="w-full bg-black py-24 md:py-32 px-4 md:px-6 flex flex-col items-center overflow-hidden transition-all duration-500 rounded-[50px] mb-10 mt-10">
       <AnimatedHeading
-        text="The design process"
+        text="The Design Process"
         className="text-white font-semibold text-[2.5rem] md:text-[3.5rem] mb-16 md:mb-24 text-center flex justify-center flex-wrap"
         style={{ fontFamily: "'Outfit', sans-serif" }}
       />
@@ -808,7 +808,7 @@ function DesignToolsSection() {
   return (
     <section id="tools" className={`w-full py-24 px-6 flex flex-col items-center overflow-hidden relative transition-colors duration-500 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}>
       <AnimatedHeading
-        text="Tools & stacks"
+        text="Tools & Stacks"
         className={`font-semibold text-[2.8rem] md:text-[3.8rem] mb-12 text-center flex justify-center flex-wrap ${isDark ? 'text-white' : 'text-black'}`}
         style={{ fontFamily: "'Outfit', sans-serif" }}
       />
