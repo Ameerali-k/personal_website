@@ -310,7 +310,7 @@ function HeroSection() {
       style={{ marginTop: "-80px", paddingTop: "80px" }}
     >
       <style>{`
-        #home { min-height: calc(70vh - 50px); }
+        #home { min-height: calc(80vh - 50px); }
         @media (min-width: 768px) {
           #home { min-height: calc(100vh - 50px); }
         }

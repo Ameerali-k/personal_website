@@ -17,6 +17,13 @@
   animation: marquee 9s linear infinite;
 }
 
+/* Mobile: make the marquee scroll faster */
+@media (max-width: 767px) {
+  .animate-marquee {
+    animation-duration: 4.5s; /* 2x speed */
+  }
+}
+
 @keyframes custom-wave {
   0% {
     transform: translateX(0);
