@@ -262,7 +262,7 @@ function CircularText() {
 /* ─── Purple Wave ─── */
 function WaveShape() {
   return (
-    <div className="absolute bottom-0 pointer-events-none" style={{ left: "-5%", right: "-5%", width: "110%", height: "300px" }}>
+    <div className="absolute bottom-0 pointer-events-none h-[50px] md:h-[300px]" style={{ left: "-5%", right: "-5%", width: "110%" }}>
       <svg
         className="absolute bottom-0 w-full h-full"
         viewBox="0 0 1920 276"
