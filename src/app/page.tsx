@@ -307,8 +307,14 @@ function HeroSection() {
         ? 'bg-gradient-to-br from-[#002a11] via-[#001709] to-[#000a04]'
         : 'bg-[#f7f7f7]'
         }`}
-      style={{ minHeight: "calc(100vh - 50px)", marginTop: "-80px", paddingTop: "80px" }}
+      style={{ marginTop: "-80px", paddingTop: "80px" }}
     >
+      <style>{`
+        #home { min-height: calc(50vh - 50px); }
+        @media (min-width: 768px) {
+          #home { min-height: calc(100vh - 50px); }
+        }
+      `}</style>
       {/* Grid Background Overlay */}
       {isDark && (
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40"
