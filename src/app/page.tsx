@@ -640,12 +640,12 @@ function ServicesSection() {
 /* ─── Projects Section ─── */
 const projectsList = [
   { num: "01", title: "Branding", icon: "/branding.svg" },
-  { num: "02", title: "Web design &\ndevelopment", icon: "/Web design.svg" },
-  { num: "03", title: "Graphic\ndesigning", icon: "/Graphic design.svg" },
-  { num: "04", title: "Motion\ngraphics", icon: "/motion graphics.svg" },
-  { num: "05", title: "Presentation\ndesign", icon: "/presentation design.svg" },
+  { num: "02", title: "Web Design &\nDevelopment", icon: "/Web design.svg" },
+  { num: "03", title: "Graphic\nDesigning", icon: "/Graphic design.svg" },
+  { num: "04", title: "Motion\nGraphics", icon: "/motion graphics.svg" },
+  { num: "05", title: "Presentation\nDesign", icon: "/presentation design.svg" },
   { num: "06", title: "Packaging", icon: "/packaging.svg" },
-  { num: "07", title: "Video editing", icon: "/video editing.svg" },
+  { num: "07", title: "Video Editing", icon: "/video editing.svg" },
 ];
 
 function ProjectCard({ project, index }: any) {
@@ -665,10 +665,10 @@ function ProjectCard({ project, index }: any) {
       <img src="/card line.png" alt="Lines" className={`absolute bottom-0 left-0 w-full h-[75%] object-cover object-bottom pointer-events-none opacity-40 ${isDark ? 'mix-blend-screen' : 'mix-blend-multiply'}`} />
       {/* Number & Title */}
       <div className="relative z-10 flex items-baseline gap-3 mt-2">
-        <span className="font-bold text-xl md:text-[1.7rem] leading-none tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", color: "#00dd00" }}>
+        <span className="font-bold text-2xl md:text-[2.2rem] leading-none tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", color: "#00dd00" }}>
           {project.num}
         </span>
-        <h3 className={`font-bold text-xl md:text-[1.9rem] whitespace-pre-line leading-[1.1] tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <h3 className={`font-bold text-2xl md:text-[2.4rem] whitespace-pre-line leading-[1.1] tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
           {project.title}
         </h3>
       </div>
