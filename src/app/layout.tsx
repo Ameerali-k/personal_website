@@ -1,8 +1,6 @@
 import "../styles/index.css";
 import { CustomCursor } from "../components/CustomCursor";
-import { Header } from "../components/Header";
-import { ContactSection } from "../components/ContactSection";
-import { FooterSection } from "../components/FooterSection";
+import LayoutWrapper from "../components/LayoutWrapper";
 
 export const metadata = {
   title: "My React App is now Next.js",
@@ -17,11 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <CustomCursor />
-        <Header />
-        {children}
-        <ContactSection />
-        <FooterSection />
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
       </body>
     </html>
   );

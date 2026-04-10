@@ -4,26 +4,68 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { fetchProjectBySlug, hasWordPressEndpoint, type CmsProject } from "../../../lib/wordpress";
+import { supabase } from "@/lib/supabase";
 
 export default function ProjectPage() {
   const { slug } = useParams();
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [dateStr, setDateStr] = useState("");
   const [showContent, setShowContent] = useState(false);
+  const [project, setProject] = useState<any | null>(null);
+  const [isLoadingProject, setIsLoadingProject] = useState(true);
 
-  // Re-hydrate or decode the title from slug
-  const rawSlug = String(slug || "");
-  const title = rawSlug.split('-').join(' ').toUpperCase();
+  const rawSlug = Array.isArray(slug) ? slug[0] : String(slug || "");
+  const fallbackTitle = rawSlug.split("-").join(" ").toUpperCase();
 
   // Ensure scroll is at top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
-    const date = new Date();
-    setDateStr(`${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`);
   }, []);
 
-  const displayTitle = title === "WEB DESIGN DEVELOPMENT" ? "WEB DESIGN & DEVELOPMENT" : title;
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadProject() {
+      if (!rawSlug) {
+        setIsLoadingProject(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("projects")
+          .select("*")
+          .eq("slug", rawSlug)
+          .single();
+
+        if (!isMounted) return;
+
+        if (error || !data) {
+          // If Supabase fails, try WordPress as fallback or just show empty
+          setProject(null);
+        } else {
+          setProject(data);
+          const sourceDate = data.created_at ? new Date(data.created_at) : new Date();
+          setDateStr(`${sourceDate.getDate().toString().padStart(2, "0")}/${(sourceDate.getMonth() + 1).toString().padStart(2, "0")}/${sourceDate.getFullYear()}`);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (isMounted) setIsLoadingProject(false);
+      }
+    }
+
+    loadProject();
+    return () => {
+      isMounted = false;
+    };
+  }, [rawSlug]);
+
+  const title = project?.title?.toUpperCase() || fallbackTitle;
+  const displayTitle = title;
   const titleWords = displayTitle.split(" ");
+  const overviewText = project?.description || "";
 
   return (
     <motion.main
@@ -52,7 +94,7 @@ export default function ProjectPage() {
           className="flex gap-4 mb-6"
         >
           <div className="px-5 py-2 bg-[#00ff00] text-black font-semibold rounded-[4px] text-xs md:text-sm shadow-sm tracking-wide">
-            {title === "WEB DESIGN DEVELOPMENT" ? "Web Design & Development" : title}
+            {project?.title || (title === "WEB DESIGN DEVELOPMENT" ? "Web Design & Development" : title)}
           </div>
           <button
             onClick={() => setIsShareOpen(true)}
@@ -110,7 +152,7 @@ export default function ProjectPage() {
                   Project Overview
                 </h2>
                 <p className="text-center text-[#1d2431] leading-relaxed font-medium text-base md:text-[1.1rem]" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+                  {overviewText || "No description provided for this project."}
                 </p>
               </motion.div>
             </motion.div>
@@ -144,19 +186,40 @@ export default function ProjectPage() {
               ))}
             </h2>
 
-            {/* Image Mockup Wrapper */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 50 }}
-              whileInView={{ scale: 1, opacity: 1, y: 0 }}
-              viewport={{ once: false, margin: "-50px" }}
-              transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
-              className="w-full max-w-[1300px] h-auto rounded-[30px] md:rounded-[40px] overflow-hidden mb-32 border border-black/5 bg-gray-100 flex items-center justify-center p-0 shadow-lg"
-            >
-              <img src="/portfolio.png" alt="Portfolio" className="w-full h-auto object-cover" />
-            </motion.div>
+            {/* Image Gallery / Mockup Wrapper */}
+            <div className="w-full max-w-[1300px] flex flex-col gap-8 mb-32">
+              {project?.images && Array.isArray(project.images) && project.images.length > 0 ? (
+                project.images.map((img: string, idx: number) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ scale: 0.9, opacity: 0, y: 50 }}
+                    whileInView={{ scale: 1, opacity: 1, y: 0 }}
+                    viewport={{ once: false, margin: "-50px" }}
+                    transition={{ duration: 1, ease: "easeOut", delay: 0.1 * idx }}
+                    className="w-full h-auto rounded-[30px] md:rounded-[40px] overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0 shadow-lg"
+                  >
+                    <img src={img} alt={`${project?.title} - ${idx + 1}`} className="w-full h-auto object-cover" />
+                  </motion.div>
+                ))
+              ) : (
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0, y: 50 }}
+                  whileInView={{ scale: 1, opacity: 1, y: 0 }}
+                  viewport={{ once: false, margin: "-50px" }}
+                  transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+                  className="w-full h-auto rounded-[30px] md:rounded-[40px] overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0 shadow-lg"
+                >
+                  <img src={project?.image_url || "/portfolio.png"} alt={project?.title || "Portfolio"} className="w-full h-auto object-cover" />
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {!isLoadingProject && !project && (
+        <p className="text-sm text-red-600 mb-10">Project not found.</p>
+      )}
 
       {/* Share Modal */}
       <AnimatePresence>
@@ -177,7 +240,11 @@ export default function ProjectPage() {
               <p className="text-[#1d2431] text-xs md:text-sm text-center mb-6 font-medium">You can share this project as an embed or via the URL.</p>
 
               <div className="w-full aspect-[16/10] rounded-[16px] overflow-hidden mb-6 relative border border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center">
-                <img src="/portfolio.png" alt="Project preview" className="w-[85%] h-auto object-cover rounded-md" />
+                <img 
+                  src={(project?.images && project.images[0]) || project?.thumbnail_url || project?.image_url || "/portfolio.png"} 
+                  alt="Project preview" 
+                  className="w-full h-full object-cover" 
+                />
               </div>
 
               <div className="flex items-center gap-6 mb-8 mt-2">

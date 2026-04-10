@@ -8,6 +8,8 @@ import imgEllipse7 from "figma:asset/85314c3bcc3ccdce33317a4411ce06eacb7be7dd.pn
 import imgEllipse8 from "figma:asset/0119b0c1a6625f13ae62461589cf4046baf417cd.png";
 import imgClapping from "figma:asset/e80ce3c7e8b21c57c9d75d726b350ff4f9b5b9ce.png";
 import imgLogoAvatar from "figma:asset/67b3b0749a2c1ad0580b543246a797b39269c8a6.png";
+import { fetchProjects, hasWordPressEndpoint, type CmsProjectSummary } from "../lib/wordpress";
+import { supabase } from "@/lib/supabase";
 
 // ─── Theme Context ───
 const ThemeContext = createContext<boolean>(true); // default dark
@@ -638,21 +640,30 @@ function ServicesSection() {
 }
 
 /* ─── Projects Section ─── */
-const projectsList = [
-  { num: "01", title: "Branding", icon: "/branding.svg" },
-  { num: "02", title: "Web Design &\nDevelopment", icon: "/Web design.svg" },
-  { num: "03", title: "Graphic\nDesigning", icon: "/Graphic design.svg" },
-  { num: "04", title: "Motion\nGraphics", icon: "/motion graphics.svg" },
-  { num: "05", title: "Presentation\nDesign", icon: "/presentation design.svg" },
-  { num: "06", title: "Packaging", icon: "/packaging.svg" },
-  { num: "07", title: "Video Editing", icon: "/video editing.svg" },
+interface SupabaseProject {
+  id: number;
+  title: string;
+  category: string;
+  description: string;
+  image_url: string;
+  slug: string;
+}
+
+const fallbackProjects: any[] = [
+  { id: 1, slug: "branding", title: "Branding", category: "Branding", description: "", image_url: "/branding.svg" },
+  { id: 2, slug: "web-design-development", title: "Web Design & Development", category: "Web Design", description: "", image_url: "/Web design.svg" },
+  { id: 3, slug: "graphic-designing", title: "Graphic Designing", category: "Graphic Design", description: "", image_url: "/Graphic design.svg" },
+  { id: 4, slug: "motion-graphics", title: "Motion Graphics", category: "Motion Graphics", description: "", image_url: "/motion graphics.svg" },
+  { id: 5, slug: "presentation-design", title: "Presentation Design", category: "Presentation", description: "", image_url: "/presentation design.svg" },
+  { id: 6, slug: "packaging", title: "Packaging", category: "Packaging", description: "", image_url: "/packaging.svg" },
+  { id: 7, slug: "video-editing", title: "Video Editing", category: "Video Editing", description: "", image_url: "/video editing.svg" },
 ];
 
-function ProjectCard({ project, index }: any) {
+function ProjectCard({ project, index }: { project: any; index: number }) {
   const isDark = useTheme();
   return (
     <a
-      href={`/projects/${project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+      href={`/projects/${project.slug}`}
       className={`block relative w-[280px] sm:w-[340px] md:w-[420px] h-[38vh] md:h-[55vh] min-h-[280px] md:min-h-[440px] max-h-[600px] flex-shrink-0 rounded-[28px] md:rounded-[32px] overflow-hidden p-6 sm:p-10 border-[1.5px] border-[#00ff00] text-left shadow-[0_10px_40px_rgba(0,0,0,0.12)] group cursor-none transition-all duration-500 ${isDark ? 'bg-[#141827]' : 'bg-white'}`}
       data-cursor-text="Explore"
       data-cursor-shape="circle"
@@ -663,23 +674,27 @@ function ProjectCard({ project, index }: any) {
       <div className="absolute top-0 left-0 w-full h-[50%] bg-gradient-to-b from-[#00ff00]/30 via-[#00ff00]/5 to-transparent pointer-events-none" />
       {/* Lines image starting from bottom */}
       <img src="/card line.png" alt="Lines" className={`absolute bottom-0 left-0 w-full h-[75%] object-cover object-bottom pointer-events-none opacity-40 ${isDark ? 'mix-blend-screen' : 'mix-blend-multiply'}`} />
-      {/* Number & Title */}
-      <div className="relative z-10 flex items-baseline gap-3 mt-2">
-        <span className="font-bold text-2xl md:text-[2.2rem] leading-none tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", color: "#00dd00" }}>
-          {project.num}
+      
+      {/* Number & Title in one row (Top Aligned) */}
+      <div className="relative z-10 flex items-start gap-4 mt-2">
+        <span className="font-bold text-xl md:text-2xl leading-none tracking-tight pt-1 md:pt-2" style={{ fontFamily: "'Outfit', sans-serif", color: "#00dd00" }}>
+          {String(index + 1).padStart(2, "0")}
         </span>
-        <h3 className={`font-bold text-2xl md:text-[2.4rem] whitespace-pre-line leading-[1.1] tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <h3 className={`font-bold text-2xl md:text-[2.2rem] whitespace-pre-line leading-[1.1] tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
           {project.title}
         </h3>
       </div>
-      {/* Hero Icon at bottom right */}
-      <img src={project.icon} alt={project.title} className="absolute bottom-6 right-6 md:bottom-10 md:right-10 w-[100px] sm:w-[130px] md:w-[180px] h-auto object-contain z-10 transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.03] drop-shadow-xl" />
+      
+      {/* Image / Icon */}
+      <img src={project.thumbnail_url || project.image_url || "/branding.svg"} alt={project.title} className="absolute bottom-6 right-6 md:bottom-10 md:right-10 w-[100px] sm:w-[130px] md:w-[180px] h-auto max-h-[120px] md:max-h-[220px] object-contain z-10 transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.03] drop-shadow-xl rounded-xl" />
     </a>
   );
 }
 
 function ProjectsSection() {
   const isDark = useTheme();
+  const [projects, setProjects] = useState<any[]>([]);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -688,9 +703,45 @@ function ProjectsSection() {
   const smoothProgress = useSpring(scrollYProgress, { damping: 15, stiffness: 100, mass: 0.1 });
   const x = useTransform(smoothProgress, [0, 1], ["0%", "-85%"]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadProjects() {
+      try {
+        const { data, error } = await supabase
+          .from("projects")
+          .select("*")
+          .order("created_at", { ascending: true }); // Changed to First Added First
+
+        if (!isMounted) return;
+
+        if (error) {
+          setProjects(fallbackProjects);
+        } else if (!data || data.length === 0) {
+          setProjects([]); // Truly empty
+        } else {
+          setProjects(data);
+        }
+      } catch (err) {
+        if (isMounted) setProjects(fallbackProjects);
+      } finally {
+        if (isMounted) setIsLoadingProjects(false);
+      }
+    }
+
+    loadProjects();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
-    <section ref={containerRef} id="projects" className={`relative h-[400vh] mb-10 md:mb-20 transition-colors duration-500 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}>
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-between overflow-hidden pt-16 pb-32 md:pt-24 md:pb-48">
+    <section 
+      ref={containerRef} 
+      id="projects" 
+      className={`relative transition-colors duration-500 ${projects.length > 0 ? 'h-[400vh]' : 'h-auto'} mb-10 md:mb-20 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}
+    >
+      <div className={`${projects.length > 0 ? 'sticky top-0 h-screen' : 'relative py-20'} flex flex-col items-center justify-between overflow-hidden pt-16 pb-32 md:pt-24 md:pb-48`}>
         <div className="max-w-[1200px] w-full mx-auto px-6 mb-8 md:mb-16 text-center">
           <AnimatedHeading
             text="Handpicked Projects"
@@ -703,11 +754,22 @@ function ProjectsSection() {
         </div>
         <div className="w-full h-full flex flex-1 items-center justify-start z-20">
           <motion.div style={{ x }} className="flex gap-4 md:gap-7 px-[5vw] pb-12 md:pb-0">
-            {projectsList.map((project, index) => (
+            {projects.map((project, index) => (
               <ProjectCard key={index} project={project} index={index} />
             ))}
           </motion.div>
         </div>
+        {!isLoadingProjects && projects.length === 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center p-12 md:p-20 bg-white/5 border border-dashed border-white/10 rounded-[40px] mb-20 md:mb-32"
+          >
+            <p className={`text-xl md:text-3xl font-medium tracking-tight opacity-50 ${isDark ? "text-white" : "text-black"}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
+              Portfolio will coming soon
+            </p>
+          </motion.div>
+        )}
       </div>
     </section>
   );
