@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { sendEmail } from "@/lib/actions";
 
 function AnimatedHeading({ text, className, style }: { text: string; className?: string; style?: React.CSSProperties }) {
   return (
@@ -47,6 +48,42 @@ export function ContactSection() {
     return () => window.removeEventListener('siteThemeChange', handler);
   }, []);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    mobile: "",
+    email: "",
+    service: "",
+    message: ""
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const result = await sendEmail(formData);
+
+      if (result.success) {
+        setIsSuccess(true);
+        setFormData({ name: "", mobile: "", email: "", service: "", message: "" });
+        setTimeout(() => setIsSuccess(false), 5000);
+      } else {
+        alert(`Error: ${result.error || "Failed to send message. Please try again."}`);
+      }
+    } catch (err) {
+      alert("Error: Something went wrong. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name.toLowerCase()]: value }));
+  };
+
   const inputClass = `w-full px-5 py-4 border rounded-[10px] font-medium focus:outline-none focus:border-[#533fe7] focus:ring-1 focus:ring-[#533fe7] transition-all text-sm md:text-base placeholder:tracking-widest placeholder:text-sm ${
     isDark
       ? 'bg-[#1a2035] border-white/10 text-white placeholder:text-white/30'
@@ -91,23 +128,26 @@ export function ContactSection() {
             style={{ fontFamily: "'Outfit', sans-serif" }}
           />
 
-          <form className="flex flex-col gap-5 md:gap-6 w-full" onSubmit={(e) => e.preventDefault()}>
+          <form className="flex flex-col gap-5 md:gap-6 w-full" onSubmit={handleSubmit}>
             <div className="flex flex-col md:flex-row gap-5 md:gap-6 w-full">
-              <input type="text" placeholder="NAME" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} />
-              <input type="tel" placeholder="MOBILE NUMBER" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} />
+              <input required name="NAME" type="text" placeholder="NAME" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.name} onChange={handleChange} />
+              <input required name="MOBILE" type="tel" placeholder="MOBILE NUMBER" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.mobile} onChange={handleChange} />
             </div>
 
             <div className="flex flex-col md:flex-row gap-5 md:gap-6 w-full">
-              <input type="email" placeholder="EMAIL" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} />
+              <input required name="EMAIL" type="email" placeholder="EMAIL" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.email} onChange={handleChange} />
               <div className="relative w-full md:w-1/2">
                 <select
+                  required
+                  name="SERVICE"
                   className={`w-full px-5 py-4 border rounded-[10px] font-medium focus:outline-none focus:border-[#533fe7] focus:ring-1 focus:ring-[#533fe7] transition-all appearance-none text-sm md:text-base tracking-widest uppercase ${
                     isDark
                       ? 'bg-[#1a2035] border-white/10 text-white/40'
                       : 'bg-transparent border-[#B1AAE2] text-[#a0a0a0]'
                   }`}
                   style={{ fontFamily: "'Outfit', sans-serif" }}
-                  defaultValue=""
+                  value={formData.service}
+                  onChange={handleChange}
                 >
                   <option value="" disabled hidden>SELECT SERVICE</option>
                   <option value="branding" className="text-black uppercase">Branding</option>
@@ -122,23 +162,43 @@ export function ContactSection() {
             </div>
 
             <textarea
+              required
+              name="MESSAGE"
               placeholder="TELL ME ABOUT YOUR PROJECT"
               rows={7}
               className={inputClass}
               style={{ fontFamily: "'Outfit', sans-serif" }}
+              value={formData.message}
+              onChange={handleChange}
             />
 
-            <button
-              type="submit"
-              className="mt-2 self-start px-8 py-3.5 bg-gradient-to-r from-[#00ff00] to-[#0ae58c] text-black font-bold text-sm md:text-[15px] tracking-wide rounded-[8px] flex items-center justify-center gap-2 active:scale-[0.98] shadow-md hover:shadow-lg transition-transform btn-fill-bottom"
-              style={{ fontFamily: "'Outfit', sans-serif" }}
-            >
-              Send Message
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="7" y1="17" x2="17" y2="7"></line>
-                <polyline points="7 7 17 7 17 17"></polyline>
-              </svg>
-            </button>
+            <div className="flex items-center gap-4 mt-2">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-8 py-3.5 bg-gradient-to-r from-[#00ff00] to-[#0ae58c] text-black font-bold text-sm md:text-[15px] tracking-wide rounded-[8px] flex items-center justify-center gap-2 active:scale-[0.98] shadow-md hover:shadow-lg transition-all btn-fill-bottom disabled:opacity-50 disabled:scale-100"
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                {isSubmitting ? "Sending..." : "Send Message"}
+                {!isSubmitting && (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                  </svg>
+                )}
+              </button>
+
+              {isSuccess && (
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-[#00ff00] font-bold text-sm md:text-base"
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  ✓ Message Sent Successfully!
+                </motion.span>
+              )}
+            </div>
           </form>
         </motion.div>
       </div>
