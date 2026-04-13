@@ -5,6 +5,7 @@ import { Header } from "./Header";
 import { ContactSection } from "./ContactSection";
 import { FooterSection } from "./FooterSection";
 import { CustomCursor } from "./CustomCursor";
+import { TestimonialsSection } from "./TestimonialsSection";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
       <CustomCursor />
       <Header />
       {children}
+      <TestimonialsSection />
       <ContactSection />
       <FooterSection />
     </>

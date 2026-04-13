@@ -53,7 +53,7 @@ export function Header() {
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-4">
           <motion.a
-            href="/Ameerali-Graphic & Web developer.pdf"
+            href="/Ameerali_resume_Graphic _designer.pdf"
             target="_blank"
             rel="noopener noreferrer"
             whileTap={{ scale: 0.97 }}
@@ -156,7 +156,7 @@ export function Header() {
                 className="flex flex-col gap-4"
               >
                 <a
-                  href="/Ameerali-Graphic & Web developer.pdf"
+                  href="/Ameerali_resume_Graphic _designer.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`rounded-[12px] px-10 py-4 border-2 font-bold text-lg tracking-wider uppercase transition-all ${isDark ? "border-white/20 text-white" : "border-black/20 text-black"
