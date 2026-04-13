@@ -342,7 +342,7 @@ function ContatButton() {
         </div>
       </div>
       <p className="-translate-x-1/2 absolute font-['Outfit:SemiBold',sans-serif] font-semibold h-[34.45px] leading-[30px] left-[1558.08px] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-51.421px_-17.612px] mask-size-[259.842px_69.673px] text-[30px] text-black text-center top-[63.05px] w-[157px]" style={{ maskImage: `url('${imgEllipse49}')` }}>
-        Contact Me
+        Hire Me
       </p>
     </div>
   );

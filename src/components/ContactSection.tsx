@@ -146,10 +146,10 @@ export function ContactSection() {
                   onChange={handleChange}
                 >
                   <option value="" disabled hidden>SELECT SERVICE</option>
-                  <option value="branding" className="text-black uppercase">Branding</option>
-                  <option value="graphic" className="text-black uppercase">Graphic Design</option>
-                  <option value="web" className="text-black uppercase">Web Design</option>
-                  <option value="video" className="text-black uppercase">Video Editing</option>
+                  <option value="Branding" className="text-black uppercase">Branding</option>
+                  <option value="Graphic Design" className="text-black uppercase">Graphic Design</option>
+                  <option value="Web Design" className="text-black uppercase">Web Design</option>
+                  <option value="Video Editing" className="text-black uppercase">Video Editing</option>
                 </select>
                 <div className={`absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none ${isDark ? 'opacity-30' : 'opacity-40'}`}>
                   <svg width="14" height="8" viewBox="0 0 14 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 1 7 7 13 1"></polyline></svg>
