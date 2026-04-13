@@ -17,10 +17,10 @@
   animation: marquee 9s linear infinite;
 }
 
-/* Mobile: make the marquee scroll faster */
+/* Mobile: make the marquee scroll slower for better readability */
 @media (max-width: 767px) {
   .animate-marquee {
-    animation-duration: 4.5s; /* 2x speed */
+    animation-duration: 12s;
   }
 }
 
