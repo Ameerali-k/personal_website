@@ -223,7 +223,7 @@ function SkillStar() {
 function SkillsStrip() {
   return (
     <div
-      className="relative z-30 w-full overflow-hidden py-5"
+      className="relative z-30 w-full overflow-hidden h-[64px] md:h-[80px] flex items-center"
       style={{ background: "linear-gradient(to right, #00ff00, #02ff8c)" }}
     >
       <div className="flex items-center animate-marquee whitespace-nowrap">
@@ -312,9 +312,9 @@ function HeroSection() {
       style={{ marginTop: "-80px", paddingTop: "80px" }}
     >
       <style>{`
-        #home { min-height: calc(80vh - 50px); }
+        #home { min-height: calc(100dvh - 64px); }
         @media (min-width: 768px) {
-          #home { min-height: calc(100vh - 50px); }
+          #home { min-height: calc(100vh - 80px); }
         }
       `}</style>
       {/* Grid Background Overlay */}
