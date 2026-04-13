@@ -61,7 +61,7 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       const result = await sendEmail(formData);
 
@@ -84,24 +84,21 @@ export function ContactSection() {
     setFormData(prev => ({ ...prev, [name.toLowerCase()]: value }));
   };
 
-  const inputClass = `w-full px-5 py-4 border rounded-[10px] font-medium focus:outline-none focus:border-[#533fe7] focus:ring-1 focus:ring-[#533fe7] transition-all text-sm md:text-base placeholder:tracking-widest placeholder:text-sm ${
-    isDark
+  const inputClass = `w-full px-5 py-4 border rounded-[10px] font-medium focus:outline-none focus:border-[#533fe7] focus:ring-1 focus:ring-[#533fe7] transition-all text-sm md:text-base placeholder:tracking-widest placeholder:text-sm ${isDark
       ? 'bg-[#1a2035] border-white/10 text-white placeholder:text-white/30'
       : 'bg-transparent border-[#B1AAE2] text-[#1d2431] placeholder:text-[#a0a0a0]'
-  }`;
+    }`;
 
   return (
     <section
       id="contact"
-      className={`w-full py-24 md:py-32 px-4 md:px-6 flex justify-center items-center overflow-x-hidden transition-colors duration-500 ${
-        isDark ? 'bg-[#0c0e1a]' : 'bg-white'
-      }`}
+      className={`w-full py-24 md:py-32 px-4 md:px-6 flex justify-center items-center overflow-x-hidden transition-colors duration-500 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'
+        }`}
     >
-      <div className={`max-w-[1200px] w-full rounded-[32px] md:rounded-[40px] p-4 md:p-8 lg:p-12 flex flex-col md:flex-row gap-8 md:gap-14 lg:gap-20 items-stretch transition-colors duration-500 ${
-        isDark
+      <div className={`max-w-[1200px] w-full rounded-[32px] md:rounded-[40px] p-4 md:p-8 lg:p-12 flex flex-col md:flex-row gap-8 md:gap-14 lg:gap-20 items-stretch transition-colors duration-500 ${isDark
           ? 'bg-[#141827] shadow-[0_10px_60px_rgba(0,0,0,0.4)] border border-white/5'
           : 'bg-[#fdfdfd] shadow-[0_10px_60px_rgba(0,0,0,0.06)] border border-black/5'
-      }`}>
+        }`}>
 
         {/* Left: Image */}
         <motion.div
@@ -140,11 +137,10 @@ export function ContactSection() {
                 <select
                   required
                   name="SERVICE"
-                  className={`w-full px-5 py-4 border rounded-[10px] font-medium focus:outline-none focus:border-[#533fe7] focus:ring-1 focus:ring-[#533fe7] transition-all appearance-none text-sm md:text-base tracking-widest uppercase ${
-                    isDark
+                  className={`w-full px-5 py-4 border rounded-[10px] font-medium focus:outline-none focus:border-[#533fe7] focus:ring-1 focus:ring-[#533fe7] transition-all appearance-none text-sm md:text-base tracking-widest uppercase ${isDark
                       ? 'bg-[#1a2035] border-white/10 text-white/40'
                       : 'bg-transparent border-[#B1AAE2] text-[#a0a0a0]'
-                  }`}
+                    }`}
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                   value={formData.service}
                   onChange={handleChange}
@@ -162,7 +158,6 @@ export function ContactSection() {
             </div>
 
             <textarea
-              required
               name="MESSAGE"
               placeholder="TELL ME ABOUT YOUR PROJECT"
               rows={7}

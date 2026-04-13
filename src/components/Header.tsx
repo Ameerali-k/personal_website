@@ -51,8 +51,24 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Contact Button */}
-        <div className="hidden md:block">
+        {/* Action Buttons */}
+        <div className="hidden md:flex items-center gap-4">
+          <motion.a
+            href="/Ameerali-Graphic & Web developer.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileTap={{ scale: 0.97 }}
+            className={`rounded-[10px] px-6 py-2.5 border-2 font-semibold transition-all duration-300 flex items-center gap-2 ${
+              isDark 
+                ? "border-white/20 text-white hover:border-[#00ff00] hover:text-[#00ff00]" 
+                : "border-black/10 text-black hover:border-[#533FE7] hover:text-[#533FE7]"
+            }`}
+            style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.05rem" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Resume
+          </motion.a>
+
           <motion.a
             href="/#contact"
             whileTap={{ scale: 0.97 }}
@@ -140,10 +156,23 @@ export function Header() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1, transition: { delay: 0.6 } }}
+                className="flex flex-col gap-4"
               >
                 <a
+                  href="/Ameerali-Graphic & Web developer.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`rounded-[12px] px-10 py-4 border-2 font-bold text-lg tracking-wider uppercase transition-all ${
+                    isDark ? "border-white/20 text-white" : "border-black/20 text-black"
+                  }`}
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  View Resume
+                </a>
+                <a
                   href="/#contact"
-                  className="mt-6 rounded-[12px] px-10 py-5 text-black font-extrabold text-xl tracking-wider uppercase shadow-xl inline-block"
+                  className="rounded-[12px] px-10 py-5 text-black font-extrabold text-xl tracking-wider uppercase shadow-xl inline-block"
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     background: "linear-gradient(135deg, #00ff00 0%, #02ff8c 100%)",

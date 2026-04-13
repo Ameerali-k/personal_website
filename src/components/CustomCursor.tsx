@@ -12,11 +12,21 @@ export function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [cursorText, setCursorTextState] = useState("");
   const [cursorShape, setCursorShape] = useState<"circle" | "rounded">("circle");
+  const [isMobile, setIsMobile] = useState(false);
   const lastMouseX = useRef(-100);
   const lastMouseY = useRef(-100);
 
   useEffect(() => {
+    // Check if we are on mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || ('ontouchstart' in window));
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const updateCursorMetaFromPoint = (x: number, y: number) => {
+      if (window.innerWidth < 768) return; // Don't process on mobile
       const el = document.elementFromPoint(x, y) as HTMLElement | null;
       const dataTarget = el?.closest("[data-cursor-text]") as HTMLElement | null;
 
@@ -60,25 +70,27 @@ export function CustomCursor() {
     const handleScroll = () => {
       updateCursorMetaFromPoint(lastMouseX.current, lastMouseY.current);
     };
-    window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseOver);
-    window.addEventListener("setCursorText", handleSetText);
-    window.addEventListener("scroll", handleScroll, true);
+
+    if (!isMobile) {
+      window.addEventListener("mousemove", moveCursor);
+      window.addEventListener("mouseover", handleMouseOver);
+      window.addEventListener("setCursorText", handleSetText);
+      window.addEventListener("scroll", handleScroll, true);
+    }
+
     return () => {
+      window.removeEventListener("resize", checkMobile);
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
       window.removeEventListener("setCursorText", handleSetText);
       window.removeEventListener("scroll", handleScroll, true);
     };
-  }, [cursorX, cursorY]);
+  }, [cursorX, cursorY, isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <>
-      <style>{`
-        * {
-          cursor: none !important;
-        }
-      `}</style>
       <motion.div
         className="fixed top-0 left-0 flex items-center justify-center bg-[#00ff00] pointer-events-none overflow-hidden z-[10000] whitespace-nowrap shadow-lg"
         style={{
