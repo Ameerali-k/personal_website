@@ -20,7 +20,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
       <CustomCursor />
       <Header />
       {children}
-      <TestimonialsSection />
+      {!pathname?.startsWith("/projects/") && <TestimonialsSection />}
       <ContactSection />
       <FooterSection />
     </>

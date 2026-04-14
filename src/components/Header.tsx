@@ -175,7 +175,7 @@ export function Header() {
                   }}
                   onClick={() => setMenuOpen(false)}
                 >
-                  HireContact Me
+                  Hire Me
                 </a>
               </motion.div>
             </div>

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useRef, createContext, useContext } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useInView, animate, useMotionValue, useSpring } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform, useInView, animate, useMotionValue, useSpring, useMotionTemplate } from "motion/react";
 import imgWhatsApp from "figma:asset/2c5a6bc55984a9012693543c79e3a6248281632d.png";
 import imgEllipse5 from "figma:asset/3a5b038a420d2522f2cc87574955419af25bf13c.png";
 import imgEllipse6 from "figma:asset/438d2dc6e54ddcf05c803936cd7b8a7d8f1d9a0b.png";
@@ -659,35 +659,100 @@ const fallbackProjects: any[] = [
   { id: 7, slug: "video-editing", title: "Video Editing", category: "Video Editing", description: "", image_url: "/video editing.svg" },
 ];
 
-function ProjectCard({ project, index }: { project: any; index: number }) {
+function ProjectCard({ project, index, scrollYProgress, totalProjects }: { project: any; index: number; scrollYProgress: any, totalProjects: number }) {
   const isDark = useTheme();
+  const start = index / totalProjects;
+  const end = (index + 1) / totalProjects;
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  // Create a transform for each card's scale based on its position in the scroll
+  // We want the card to scale down slightly as we scroll further past it
+  const scale = useTransform(scrollYProgress, [start, end], [1, 0.95]);
+
   return (
-    <a
-      href={`/projects/${project.slug}`}
-      className={`block relative w-[280px] sm:w-[340px] md:w-[420px] h-[38vh] md:h-[55vh] min-h-[280px] md:min-h-[440px] max-h-[600px] flex-shrink-0 rounded-[28px] md:rounded-[32px] overflow-hidden p-6 sm:p-10 border-[1.5px] border-[#00ff00] text-left shadow-[0_10px_40px_rgba(0,0,0,0.12)] group cursor-none transition-all duration-500 ${isDark ? 'bg-[#141827]' : 'bg-white'}`}
-      data-cursor-text="Explore"
-      data-cursor-shape="circle"
-      onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Explore", shape: "circle" } }))}
-      onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
+    <motion.div
+      style={{
+        scale,
+        top: `calc(15vh + ${index * 40}px)`,
+        zIndex: index
+      }}
+      onMouseMove={handleMouseMove}
+      className="sticky w-full max-w-[1100px] mx-auto mb-[15vh] group"
     >
-      {/* Top linear green gradient */}
-      <div className="absolute top-0 left-0 w-full h-[50%] bg-gradient-to-b from-[#00ff00]/30 via-[#00ff00]/5 to-transparent pointer-events-none" />
-      {/* Lines image starting from bottom */}
-      <img src="/card line.png" alt="Lines" className={`absolute bottom-0 left-0 w-full h-[75%] object-cover object-bottom pointer-events-none opacity-40 ${isDark ? 'mix-blend-screen' : 'mix-blend-multiply'}`} />
-      
-      {/* Number & Title in one row (Top Aligned) */}
-      <div className="relative z-10 flex items-start gap-4 mt-2">
-        <span className="font-bold text-xl md:text-2xl leading-none tracking-tight pt-1 md:pt-2" style={{ fontFamily: "'Outfit', sans-serif", color: "#00dd00" }}>
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <h3 className={`font-bold text-2xl md:text-[2.2rem] whitespace-pre-line leading-[1.1] tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
-          {project.title}
-        </h3>
-      </div>
-      
-      {/* Image / Icon */}
-      <img src={project.thumbnail_url || project.image_url || "/branding.svg"} alt={project.title} className="absolute bottom-6 right-6 md:bottom-10 md:right-10 w-[100px] sm:w-[130px] md:w-[180px] h-auto max-h-[120px] md:max-h-[220px] object-contain z-10 transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-[1.03] drop-shadow-xl rounded-xl" />
-    </a>
+      <a
+        href={`/projects/${project.slug}`}
+        className={`block relative w-full min-h-[450px] md:min-h-[550px] rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row border border-white/10 shadow-2xl transition-all duration-500 cursor-none bg-[#2D2D36]`}
+        data-cursor-text="Explore"
+        data-cursor-shape="circle"
+        onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Explore", shape: "circle" } }))}
+        onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
+      >
+        {/* Blob Effect */}
+        <motion.div
+          className="pointer-events-none absolute -inset-px rounded-[2.5rem] opacity-0 transition duration-300 group-hover:opacity-100 z-0"
+          style={{
+            background: useMotionTemplate`
+              radial-gradient(
+                600px circle at ${mouseX}px ${mouseY}px,
+                rgba(0, 255, 0, 0.15),
+                transparent 80%
+              )
+            `,
+          }}
+        />
+        {/* Content Side */}
+        <div className={`w-full lg:w-[50%] flex flex-col justify-center p-8 md:p-12 lg:p-16 ${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'} relative z-10`}>
+          <div className="flex flex-wrap gap-3 mb-6">
+            {(project.category || "Project").split(',').map((cat: string, i: number) => (
+              <span key={i} className="bg-[#00ff00] text-black text-xs md:text-sm font-bold px-4 py-1.5 rounded-full">
+                {cat.trim()}
+              </span>
+            ))}
+          </div>
+
+          <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
+            {project.title}
+          </h3>
+
+          <p className="text-base md:text-lg mb-8 leading-relaxed font-sans text-gray-400">
+            {(() => {
+              const desc = project.description || "Portfolio project showcasing expertise in design and development.";
+              const words = desc.split(/\s+/);
+              if (words.length > 30) {
+                return words.slice(0, 30).join(' ') + '...';
+              }
+              return desc;
+            })()}
+          </p>
+
+          <div className="mt-auto">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00ff22] to-[#00cc11] text-black font-bold text-lg px-8 py-3 rounded-lg shadow-[0_0_20px_rgba(0,255,0,0.3)] group-hover:shadow-[0_0_30px_rgba(0,255,0,0.5)] transition-all">
+              View Project
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Image Side */}
+        <div className={`relative w-full lg:w-[50%] min-h-[300px] flex items-center justify-center p-4 md:p-8 ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} z-10`}>
+          <div className="relative w-full h-full rounded-2xl overflow-hidden">
+            <img
+              src={project.image_url || "/branding.svg"}
+              alt={project.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          </div>
+        </div>
+      </a>
+    </motion.div>
   );
 }
 
@@ -700,8 +765,6 @@ function ProjectsSection() {
     target: containerRef,
     offset: ["start start", "end end"]
   });
-  const smoothProgress = useSpring(scrollYProgress, { damping: 15, stiffness: 100, mass: 0.1 });
-  const x = useTransform(smoothProgress, [0, 1], ["0%", "-85%"]);
 
   useEffect(() => {
     let isMounted = true;
@@ -711,14 +774,14 @@ function ProjectsSection() {
         const { data, error } = await supabase
           .from("projects")
           .select("*")
-          .order("created_at", { ascending: true }); // Changed to First Added First
+          .order("created_at", { ascending: true });
 
         if (!isMounted) return;
 
         if (error) {
           setProjects(fallbackProjects);
         } else if (!data || data.length === 0) {
-          setProjects([]); // Truly empty
+          setProjects([]);
         } else {
           setProjects(data);
         }
@@ -736,34 +799,41 @@ function ProjectsSection() {
   }, []);
 
   return (
-    <section 
-      ref={containerRef} 
-      id="projects" 
-      className={`relative transition-colors duration-500 ${projects.length > 0 ? 'h-[400vh]' : 'h-auto'} mb-10 md:mb-20 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}
+    <section
+      ref={containerRef}
+      id="projects"
+      className={`relative transition-colors duration-500 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}
+      style={{ minHeight: projects.length > 0 ? `${projects.length * 80}vh` : 'auto' }}
     >
-      <div className={`${projects.length > 0 ? 'sticky top-0 h-screen' : 'relative py-20'} flex flex-col items-center justify-between overflow-hidden pt-16 pb-32 md:pt-24 md:pb-48`}>
-        <div className="max-w-[1200px] w-full mx-auto px-6 mb-8 md:mb-16 text-center">
-          <AnimatedHeading
-            text="Handpicked Projects"
-            className={`font-semibold text-[2.5rem] md:text-[3.2rem] mb-6 max-w-[800px] mx-auto flex justify-center flex-wrap ${isDark ? 'text-white' : 'text-black'}`}
-            style={{ fontFamily: "'Outfit', sans-serif", lineHeight: 1.1 }}
-          />
-          <p className={`font-medium text-[1.05rem] md:text-[1.2rem] leading-relaxed mx-auto max-w-[800px] ${isDark ? 'text-white/60' : 'text-[#1d2431]'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
-            Explore my portfolio to see a blend of graphic design, motion, video editing, and web experiences. Each project reflects creativity, precision, and user-focused design.
-          </p>
-        </div>
-        <div className="w-full h-full flex flex-1 items-center justify-start z-20">
-          <motion.div style={{ x }} className="flex gap-4 md:gap-7 px-[5vw] pb-12 md:pb-0">
+      <div className="max-w-[1200px] w-full mx-auto px-6 pt-16 md:pt-24 mb-16 text-center">
+        <AnimatedHeading
+          text="Handpicked Projects"
+          className={`font-semibold text-[2.5rem] md:text-[3.2rem] mb-6 max-w-[800px] mx-auto flex justify-center flex-wrap ${isDark ? 'text-white' : 'text-black'}`}
+          style={{ fontFamily: "'Outfit', sans-serif", lineHeight: 1.1 }}
+        />
+        <p className={`font-medium text-[1.05rem] md:text-[1.2rem] leading-relaxed mx-auto max-w-[800px] ${isDark ? 'text-white/60' : 'text-[#1d2431]'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
+          Explore my portfolio to see a blend of graphic design, motion, video editing, and web experiences. Each project reflects creativity, precision, and user-focused design.
+        </p>
+      </div>
+
+      <div className="w-full relative px-6 md:px-10">
+        {projects.length > 0 ? (
+          <div className="flex flex-col items-center">
             {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} index={index} />
+              <ProjectCard
+                key={index}
+                project={project}
+                index={index}
+                scrollYProgress={scrollYProgress}
+                totalProjects={projects.length}
+              />
             ))}
-          </motion.div>
-        </div>
-        {!isLoadingProjects && projects.length === 0 && (
-          <motion.div 
+          </div>
+        ) : !isLoadingProjects && (
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center p-12 md:p-20 bg-white/5 border border-dashed border-white/10 rounded-[40px] mb-20 md:mb-32"
+            className="flex flex-col items-center justify-center p-12 md:p-20 bg-white/5 border border-dashed border-white/10 rounded-[40px] mb-20 md:mb-32 mt-10"
           >
             <p className={`text-xl md:text-3xl font-medium tracking-tight opacity-50 ${isDark ? "text-white" : "text-black"}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
               Portfolio will coming soon

@@ -93,9 +93,11 @@ export default function ProjectPage() {
           transition={{ duration: 0.8, ease: "easeOut", delay: 1.0 }}
           className="flex gap-4 mb-6"
         >
-          <div className="px-5 py-2 bg-[#00ff00] text-black font-semibold rounded-[4px] text-xs md:text-sm shadow-sm tracking-wide">
-            {project?.title || (title === "WEB DESIGN DEVELOPMENT" ? "Web Design & Development" : title)}
-          </div>
+          {(project?.category || "Project").split(',').map((cat: string, i: number) => (
+            <div key={i} className="px-5 py-2 bg-[#00ff00] text-black font-semibold rounded-[4px] text-xs md:text-sm shadow-sm tracking-wide">
+              {cat.trim()}
+            </div>
+          ))}
           <button
             onClick={() => setIsShareOpen(true)}
             className="px-5 py-2 bg-white border border-gray-300 text-black font-semibold rounded-[4px] text-xs md:text-sm flex items-center gap-2 hover:bg-gray-50 transition-colors shadow-sm tracking-wide"
@@ -240,10 +242,10 @@ export default function ProjectPage() {
               <p className="text-[#1d2431] text-xs md:text-sm text-center mb-6 font-medium">You can share this project as an embed or via the URL.</p>
 
               <div className="w-full aspect-[16/10] rounded-[16px] overflow-hidden mb-6 relative border border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center">
-                <img 
-                  src={(project?.images && project.images[0]) || project?.thumbnail_url || project?.image_url || "/portfolio.png"} 
-                  alt="Project preview" 
-                  className="w-full h-full object-cover" 
+                <img
+                  src={(project?.images && project.images[0]) || project?.thumbnail_url || project?.image_url || "/portfolio.png"}
+                  alt="Project preview"
+                  className="w-full h-full object-cover"
                 />
               </div>
 

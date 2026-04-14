@@ -27,12 +27,12 @@ export default function AdminProjects() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  
+
   // Thumbnail State
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState("");
-  
+
   // Gallery State
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -104,7 +104,7 @@ export default function AdminProjects() {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
       setImages(prev => [...prev, ...selectedFiles]);
-      
+
       const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
       setPreviews(prev => [...prev, ...newPreviews]);
     }
@@ -138,7 +138,7 @@ export default function AdminProjects() {
         const { data: { publicUrl } } = supabase.storage
           .from("projects")
           .getPublicUrl(filePath);
-        
+
         finalThumbnailUrl = publicUrl;
       }
 
@@ -157,20 +157,20 @@ export default function AdminProjects() {
         const { data: { publicUrl } } = supabase.storage
           .from("projects")
           .getPublicUrl(filePath);
-        
+
         galleryUrls.push(publicUrl);
       }
 
       const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
 
-      const projectData = { 
-        title, 
-        category, 
-        description, 
-        thumbnail_url: finalThumbnailUrl, 
-        image_url: finalThumbnailUrl, 
-        images: galleryUrls, 
-        slug 
+      const projectData = {
+        title,
+        category,
+        description,
+        thumbnail_url: finalThumbnailUrl,
+        image_url: finalThumbnailUrl,
+        images: galleryUrls,
+        slug
       };
 
       if (editingId) {
@@ -198,13 +198,13 @@ export default function AdminProjects() {
     try {
       // 1. Collect all storage paths to delete
       const pathsToDelete: string[] = [];
-      
+
       // Add thumbnail path
       if (thumbUrl) {
         const thumbName = thumbUrl.split('/').pop();
         if (thumbName) pathsToDelete.push(`project-images/${thumbName}`);
       }
-      
+
       // Add all gallery image paths
       if (Array.isArray(allImages)) {
         allImages.forEach(url => {
@@ -220,7 +220,7 @@ export default function AdminProjects() {
         const { error: storageError } = await supabase.storage
           .from("projects")
           .remove(pathsToDelete);
-        
+
         if (storageError) {
           console.warn("Storage cleanup error (some files might still exist):", storageError.message);
         }
@@ -300,7 +300,13 @@ export default function AdminProjects() {
                 </div>
                 <div className="p-5 md:p-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-[#00ff00] text-[10px] md:text-xs font-bold uppercase tracking-widest">{project.category}</span>
+                  <div className="flex flex-wrap gap-2">
+                    {project.category.split(',').map((cat: string, i: number) => (
+                      <span key={i} className="text-[#00ff00] text-[10px] md:text-xs font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-md">
+                        {cat.trim()}
+                      </span>
+                    ))}
+                  </div>
                     <span className="text-white/30 text-[9px] md:text-[10px] uppercase font-bold">{project.images?.length || 0} Gallery</span>
                   </div>
                   <h3 className="text-lg md:text-xl font-bold mt-2 font-['Outfit'] line-clamp-1">{project.title}</h3>
@@ -342,7 +348,7 @@ export default function AdminProjects() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs md:text-sm font-medium text-white/60 ml-1">Category</label>
-                    <input required value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-2.5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-[#00ff00]/50" />
+                    <input required value={category} placeholder="Branding, Website, UI/UX" onChange={(e) => setCategory(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-2.5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-[#00ff00]/50" />
                   </div>
                 </div>
 
