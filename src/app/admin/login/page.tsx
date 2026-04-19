@@ -48,24 +48,26 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-white/80 text-sm font-medium mb-2 ml-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Email</label>
+            <label htmlFor="login-email" className="block text-white/80 text-sm font-medium mb-2 ml-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Email</label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-[#00ff00]/50 transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-[#00ff00] focus:ring-1 focus:ring-[#00ff00]/50 transition-all"
               placeholder="admin@example.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-white/80 text-sm font-medium mb-2 ml-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Password</label>
+            <label htmlFor="login-password" className="block text-white/80 text-sm font-medium mb-2 ml-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Password</label>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-[#00ff00]/50 transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-[#00ff00] focus:ring-1 focus:ring-[#00ff00]/50 transition-all"
               placeholder="••••••••"
               required
             />
@@ -84,7 +86,8 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#00ff00] hover:bg-[#00dd00] text-black font-bold py-4 rounded-2xl transition-all shadow-[0_0_20px_rgba(0,255,0,0.3)] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+            aria-busy={loading}
+            className="w-full bg-[#00ff00] hover:bg-[#00dd00] text-black font-bold py-4 rounded-2xl transition-all shadow-[0_0_20px_rgba(0,255,0,0.3)] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00ff00]"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             {loading ? "Authenticating..." : "Sign In"}

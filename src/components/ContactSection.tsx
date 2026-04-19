@@ -50,6 +50,7 @@ export function ContactSection() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     mobile: "",
@@ -61,6 +62,7 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setFormError(null);
 
     try {
       const result = await sendEmail(formData);
@@ -70,10 +72,10 @@ export function ContactSection() {
         setFormData({ name: "", mobile: "", email: "", service: "", message: "" });
         setTimeout(() => setIsSuccess(false), 5000);
       } else {
-        alert(`Error: ${result.error || "Failed to send message. Please try again."}`);
+        setFormError(result.error || "Failed to send message. Please try again.");
       }
     } catch (err) {
-      alert("Error: Something went wrong. Please check your connection.");
+      setFormError("Something went wrong. Please check your connection.");
     } finally {
       setIsSubmitting(false);
     }
@@ -127,15 +129,20 @@ export function ContactSection() {
 
           <form className="flex flex-col gap-5 md:gap-6 w-full" onSubmit={handleSubmit}>
             <div className="flex flex-col md:flex-row gap-5 md:gap-6 w-full">
-              <input required name="NAME" type="text" placeholder="NAME" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.name} onChange={handleChange} />
-              <input required name="MOBILE" type="tel" placeholder="MOBILE NUMBER" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.mobile} onChange={handleChange} />
+              <label className="sr-only" htmlFor="contact-name">Name</label>
+              <input required id="contact-name" name="NAME" type="text" placeholder="NAME" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.name} onChange={handleChange} />
+              <label className="sr-only" htmlFor="contact-mobile">Mobile Number</label>
+              <input required id="contact-mobile" name="MOBILE" type="tel" inputMode="tel" placeholder="MOBILE NUMBER" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.mobile} onChange={handleChange} />
             </div>
 
             <div className="flex flex-col md:flex-row gap-5 md:gap-6 w-full">
-              <input required name="EMAIL" type="email" placeholder="EMAIL" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.email} onChange={handleChange} />
+              <label className="sr-only" htmlFor="contact-email">Email</label>
+              <input required id="contact-email" name="EMAIL" type="email" placeholder="EMAIL" className={inputClass} style={{ fontFamily: "'Outfit', sans-serif" }} value={formData.email} onChange={handleChange} />
               <div className="relative w-full md:w-1/2">
+                <label className="sr-only" htmlFor="contact-service">Service</label>
                 <select
                   required
+                  id="contact-service"
                   name="SERVICE"
                   className={`w-full px-5 py-4 border rounded-[10px] font-medium focus:outline-none focus:border-[#533fe7] focus:ring-1 focus:ring-[#533fe7] transition-all appearance-none text-sm md:text-base tracking-widest uppercase ${isDark
                       ? 'bg-[#1a2035] border-white/10 text-white/40'
@@ -157,7 +164,10 @@ export function ContactSection() {
               </div>
             </div>
 
+            <label className="sr-only" htmlFor="contact-message">Message</label>
             <textarea
+              required
+              id="contact-message"
               name="MESSAGE"
               placeholder="TELL ME ABOUT YOUR PROJECT"
               rows={7}
@@ -167,10 +177,23 @@ export function ContactSection() {
               onChange={handleChange}
             />
 
+            {formError && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-500 text-sm font-medium bg-red-500/10 border border-red-500/20 rounded-[8px] px-4 py-3"
+                role="alert"
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                {formError}
+              </motion.p>
+            )}
+
             <div className="flex items-center gap-4 mt-2">
               <button
                 type="submit"
                 disabled={isSubmitting}
+                aria-busy={isSubmitting}
                 className="px-8 py-3.5 bg-gradient-to-r from-[#00ff00] to-[#0ae58c] text-black font-bold text-sm md:text-[15px] tracking-wide rounded-[8px] flex items-center justify-center gap-2 active:scale-[0.98] shadow-md hover:shadow-lg transition-all btn-fill-bottom disabled:opacity-50 disabled:scale-100"
                 style={{ fontFamily: "'Outfit', sans-serif" }}
               >
@@ -188,6 +211,7 @@ export function ContactSection() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="text-[#00ff00] font-bold text-sm md:text-base"
+                  role="status"
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                 >
                   ✓ Message Sent Successfully!

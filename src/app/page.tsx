@@ -628,7 +628,7 @@ function ServicesSection() {
               <h3 className="text-white font-bold tracking-wide text-[1.4rem] md:text-[2rem] leading-tight mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 {service.title}
               </h3>
-              <p className="text-white text-[0.65rem] md:text-xs tracking-[0.1em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+              <p className="text-white text-xs md:text-sm tracking-[0.1em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 {service.desc}
               </p>
             </motion.div>
@@ -817,7 +817,13 @@ function ProjectsSection() {
       </div>
 
       <div className="w-full relative px-6 md:px-10">
-        {projects.length > 0 ? (
+        {isLoadingProjects ? (
+          <div className="flex flex-col items-center gap-6 mb-20 mt-4" aria-busy="true" aria-label="Loading projects">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className={`w-full max-w-[1200px] rounded-[32px] md:rounded-[40px] overflow-hidden animate-pulse ${isDark ? 'bg-white/5' : 'bg-black/5'}`} style={{ height: '420px' }} />
+            ))}
+          </div>
+        ) : projects.length > 0 ? (
           <div className="flex flex-col items-center">
             {projects.map((project, index) => (
               <ProjectCard
@@ -829,14 +835,14 @@ function ProjectsSection() {
               />
             ))}
           </div>
-        ) : !isLoadingProjects && (
+        ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center p-12 md:p-20 bg-white/5 border border-dashed border-white/10 rounded-[40px] mb-20 md:mb-32 mt-10"
           >
             <p className={`text-xl md:text-3xl font-medium tracking-tight opacity-50 ${isDark ? "text-white" : "text-black"}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
-              Portfolio will coming soon
+              Portfolio coming soon
             </p>
           </motion.div>
         )}

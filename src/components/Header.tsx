@@ -89,6 +89,8 @@ export function Header() {
           className="md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
         >
           <span className={`block w-6 h-0.5 transition-all duration-300 ${isDark ? 'bg-white' : 'bg-black'} ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
           <span className={`block w-6 h-0.5 transition-all duration-300 ${isDark ? 'bg-white' : 'bg-black'} ${menuOpen ? "opacity-0" : ""}`} />
@@ -100,6 +102,7 @@ export function Header() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ clipPath: "circle(0% at 95% 40px)", opacity: 0 }}
             animate={{
               clipPath: "circle(150% at 95% 40px)",

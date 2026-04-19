@@ -77,11 +77,12 @@ export default function ProjectPage() {
     >
       <Link
         href="/#projects"
-        className="absolute top-8 left-8 z-50 flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-[#00ff00] transition-colors rounded-full text-black shadow-sm"
+        aria-label="Go back to projects"
+        className="absolute top-8 left-8 z-50 flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-[#00ff00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00ff00] transition-colors rounded-full text-black shadow-sm"
         onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Go back", shape: "circle" } }))}
         onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
       </Link>
 
       <div className="max-w-[1000px] w-full flex flex-col items-center mt-12">
@@ -220,7 +221,13 @@ export default function ProjectPage() {
       </AnimatePresence>
 
       {!isLoadingProject && !project && (
-        <p className="text-sm text-red-600 mb-10">Project not found.</p>
+        <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+          <p className="text-2xl md:text-3xl font-bold text-black">Project not found</p>
+          <p className="text-gray-500 text-base">The project you're looking for doesn't exist or may have been removed.</p>
+          <Link href="/#projects" className="mt-4 px-6 py-3 bg-black text-white font-semibold rounded-full hover:bg-[#00ff00] hover:text-black transition-colors">
+            Back to Projects
+          </Link>
+        </div>
       )}
 
       {/* Share Modal */}
@@ -250,21 +257,51 @@ export default function ProjectPage() {
               </div>
 
               <div className="flex items-center gap-6 mb-8 mt-2">
-                <button className="hover:text-gray-500 hover:-translate-y-1 transition-all duration-300">
-                  <img src="/mdi_linkedin.svg" alt="LinkedIn" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
-                </button>
-                <button className="hover:text-gray-500 hover:-translate-y-1 transition-all duration-300">
-                  <img src="/prime_twitter.svg" alt="Twitter" className="w-5 h-5 grayscale hover:grayscale-0 transition-all" />
-                </button>
-                <button className="hover:text-gray-500 hover:-translate-y-1 transition-all duration-300">
-                  <img src="/mdi_pinterest.svg" alt="Pinterest" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
-                </button>
-                <button className="hover:text-gray-500 hover:-translate-y-1 transition-all duration-300">
-                  <img src="/ri_whatsapp-fill.svg" alt="WhatsApp" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
-                </button>
-                <button className="hover:text-gray-500 hover:-translate-y-1 transition-all duration-300">
-                  <img src="/ic_baseline-facebook.svg" alt="Facebook" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
-                </button>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on LinkedIn"
+                  className="hover:-translate-y-1 transition-all duration-300"
+                >
+                  <img src="/mdi_linkedin.svg" alt="" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}&text=${encodeURIComponent(project?.title || "Check out this project")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on Twitter"
+                  className="hover:-translate-y-1 transition-all duration-300"
+                >
+                  <img src="/prime_twitter.svg" alt="" className="w-5 h-5 grayscale hover:grayscale-0 transition-all" />
+                </a>
+                <a
+                  href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on Pinterest"
+                  className="hover:-translate-y-1 transition-all duration-300"
+                >
+                  <img src="/mdi_pinterest.svg" alt="" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
+                </a>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent((project?.title || "Check out this project") + " " + (typeof window !== "undefined" ? window.location.href : ""))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on WhatsApp"
+                  className="hover:-translate-y-1 transition-all duration-300"
+                >
+                  <img src="/ri_whatsapp-fill.svg" alt="" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
+                </a>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== "undefined" ? window.location.href : "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on Facebook"
+                  className="hover:-translate-y-1 transition-all duration-300"
+                >
+                  <img src="/ic_baseline-facebook.svg" alt="" className="w-6 h-6 grayscale hover:grayscale-0 transition-all" />
+                </a>
               </div>
 
               <div className="w-full flex justify-center">

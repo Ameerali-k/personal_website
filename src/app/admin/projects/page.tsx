@@ -21,6 +21,7 @@ export default function AdminProjects() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const router = useRouter();
 
   // Form State
@@ -186,7 +187,7 @@ export default function AdminProjects() {
       fetchProjects();
     } catch (err: any) {
       console.error(err);
-      alert(`Error saving project: ${err.message || 'Unknown error'}`);
+      setActionError(`Error saving project: ${err.message || 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -233,13 +234,29 @@ export default function AdminProjects() {
       fetchProjects();
     } catch (err) {
       console.error(err);
-      alert("Error deleting project");
+      setActionError("Error deleting project. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen bg-[#0c0e1a] text-white p-4 sm:p-6 md:p-12">
       <div className="max-w-6xl mx-auto">
+        <AnimatePresence>
+          {actionError && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center justify-between gap-4"
+              role="alert"
+            >
+              <p className="text-red-400 text-sm font-medium">{actionError}</p>
+              <button onClick={() => setActionError(null)} aria-label="Dismiss error" className="text-red-400 hover:text-red-300 flex-shrink-0">
+                <X size={16} aria-hidden="true" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 md:mb-12">
           <div className="text-center sm:text-left">
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent" style={{ fontFamily: "'Outfit', sans-serif" }}>
@@ -286,15 +303,17 @@ export default function AdminProjects() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4 md:p-6 gap-3">
                     <button
                       onClick={() => handleEdit(project)}
+                      aria-label={`Edit ${project.title}`}
                       className="p-2.5 md:p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all ml-auto"
                     >
-                      <ExternalLink size={16} />
+                      <ExternalLink size={16} aria-hidden="true" />
                     </button>
                     <button
                       onClick={() => deleteProject(project.id, project.thumbnail_url || project.image_url, project.images)}
+                      aria-label={`Delete ${project.title}`}
                       className="p-2.5 md:p-3 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={16} aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -307,7 +326,7 @@ export default function AdminProjects() {
                       </span>
                     ))}
                   </div>
-                    <span className="text-white/30 text-[9px] md:text-[10px] uppercase font-bold">{project.images?.length || 0} Gallery</span>
+                    <span className="text-white/30 text-[11px] md:text-xs uppercase font-bold">{project.images?.length || 0} Gallery</span>
                   </div>
                   <h3 className="text-lg md:text-xl font-bold mt-2 font-['Outfit'] line-clamp-1">{project.title}</h3>
                 </div>
@@ -335,8 +354,8 @@ export default function AdminProjects() {
             >
               <div className="p-5 md:p-8 border-b border-white/10 flex items-center justify-between">
                 <h2 className="text-xl md:text-2xl font-bold font-['Outfit']">{editingId ? "Edit Project" : "Add Project"}</h2>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                  <X size={20} />
+                <button onClick={() => setIsModalOpen(false)} aria-label="Close modal" className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                  <X size={20} aria-hidden="true" />
                 </button>
               </div>
 
