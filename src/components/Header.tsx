@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(true);
+   const [isDark, setIsDark] = useState(true);
+  const pathname = usePathname();
+  const isProjectPage = pathname?.startsWith("/projects/");
   const navLinks = ["Home", "Projects", "Services", "About"];
 
   useEffect(() => {
@@ -52,6 +55,16 @@ export function Header() {
 
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-4">
+          {!isProjectPage && (
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('toggleSiteTheme'))}
+              className={`p-2 transition-all duration-300 ${isDark ? "text-white hover:text-[#00ff00]" : "text-black hover:text-[#533FE7]"}`}
+              aria-label="Toggle theme"
+            >
+              <span className="text-2xl leading-none">{isDark ? "🌙" : "☀️"}</span>
+            </button>
+          )}
+
           <motion.a
             href="/Ameerali_resume_Graphic _designer.pdf"
             target="_blank"
@@ -158,6 +171,20 @@ export function Header() {
                 animate={{ opacity: 1, scale: 1, transition: { delay: 0.6 } }}
                 className="flex flex-col gap-4"
               >
+                {!isProjectPage && (
+                  <button
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent('toggleSiteTheme'));
+                      setMenuOpen(false);
+                    }}
+                    className={`flex items-center justify-center gap-3 rounded-[12px] px-10 py-4 border-2 font-bold text-lg tracking-wider uppercase transition-all ${isDark ? "border-white/20 text-white bg-white/5" : "border-black/20 text-black bg-black/5"
+                      }`}
+                    style={{ fontFamily: "'Outfit', sans-serif" }}
+                  >
+                    {isDark ? "🌙 Light Mode" : "☀️ Dark Mode"}
+                  </button>
+                )}
+
                 <a
                   href="/Ameerali_resume_Graphic _designer.pdf"
                   target="_blank"
@@ -169,6 +196,7 @@ export function Header() {
                 >
                   View Resume
                 </a>
+
                 <a
                   href="/#contact"
                   className="rounded-[12px] px-10 py-5 text-black font-extrabold text-xl tracking-wider uppercase shadow-xl inline-block"

@@ -689,7 +689,10 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
     >
       <a
         href={`/projects/${project.slug}`}
-        className={`block relative w-full min-h-[450px] md:min-h-[550px] rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row border border-white/10 shadow-2xl transition-all duration-500 cursor-none bg-[#2D2D36]`}
+        className={`block relative w-full min-h-[450px] md:min-h-[550px] rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row border shadow-2xl transition-all duration-500 cursor-none ${isDark
+          ? "bg-[#2D2D36] border-white/10"
+          : "bg-[#f5f5f7] border-black/5"
+          }`}
         data-cursor-text="Explore"
         data-cursor-shape="circle"
         onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Explore", shape: "circle" } }))}
@@ -702,7 +705,7 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
             background: useMotionTemplate`
               radial-gradient(
                 600px circle at ${mouseX}px ${mouseY}px,
-                rgba(0, 255, 0, 0.15),
+                ${isDark ? 'rgba(0, 255, 0, 0.15)' : 'rgba(83, 63, 231, 0.1)'},
                 transparent 80%
               )
             `,
@@ -718,11 +721,11 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
             ))}
           </div>
 
-          <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          <h3 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
             {project.title}
           </h3>
 
-          <p className="text-base md:text-lg mb-8 leading-relaxed font-sans text-gray-400">
+          <p className={`text-base md:text-lg mb-8 leading-relaxed font-sans ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             {(() => {
               const desc = project.description || "Portfolio project showcasing expertise in design and development.";
               const words = desc.split(/\s+/);
@@ -734,7 +737,10 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
           </p>
 
           <div className="mt-auto">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00ff22] to-[#00cc11] text-black font-bold text-lg px-8 py-3 rounded-lg shadow-[0_0_20px_rgba(0,255,0,0.3)] group-hover:shadow-[0_0_30px_rgba(0,255,0,0.5)] transition-all">
+            <div className={`inline-flex items-center gap-2 font-bold text-lg px-8 py-3 rounded-lg transition-all ${isDark
+              ? "bg-gradient-to-r from-[#00ff22] to-[#00cc11] text-black shadow-[0_0_20px_rgba(0,255,0,0.3)] group-hover:shadow-[0_0_30px_rgba(0,255,0,0.5)]"
+              : "bg-black text-white shadow-lg group-hover:bg-[#533fe7]"
+              }`}>
               View Project
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
             </div>
@@ -747,7 +753,7 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
             <img
               src={project.image_url || "/branding.svg"}
               alt={project.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover"
             />
           </div>
         </div>
@@ -1078,32 +1084,27 @@ function Preloader({ onComplete }: { onComplete: () => void }) {
 
 
 
-/* ─── Theme Toggle Button ─── */
-function ThemeToggle({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
+/* ─── WhatsApp Button ─── */
+function WhatsAppButton({ isDark }: { isDark: boolean }) {
   return (
-    <motion.button
-      onClick={onToggle}
-      aria-label="Toggle theme"
+    <motion.a
+      href="https://wa.me/98089297628"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Contact on WhatsApp"
       whileTap={{ scale: 0.92 }}
-      title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-      className="fixed z-[45] bottom-8 right-8 flex items-center justify-center w-12 h-12 rounded-full shadow-xl border transition-all duration-500"
+      className="fixed z-[45] bottom-8 right-8 flex items-center justify-center w-12 h-12 rounded-full shadow-xl border transition-all duration-500 bg-[#25D366]"
       style={{
-        background: isDark ? "#ffffff" : "#000000",
-        borderColor: isDark ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.2)",
         boxShadow: isDark
-          ? "0 4px 20px rgba(255,255,255,0.2)"
-          : "0 4px 20px rgba(0,0,0,0.4)",
-        color: isDark ? "#000000" : "#ffffff",
+          ? "0 4px 25px rgba(37, 211, 102, 0.4)"
+          : "0 4px 20px rgba(37, 211, 102, 0.3)",
+        borderColor: "rgba(255,255,255,0.1)",
       }}
     >
-      <motion.div
-        animate={{ rotate: isDark ? 0 : 180, scale: isDark ? 1 : 0.8 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="text-[1.4rem]"
-      >
-        {isDark ? "🌙" : "☀️"}
-      </motion.div>
-    </motion.button>
+      <svg role="img" viewBox="0 0 24 24" fill="white" className="w-7 h-7">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+      </svg>
+    </motion.a>
   );
 }
 
@@ -1125,6 +1126,12 @@ export default function App() {
   // Set initial dark mode on mount
   useEffect(() => {
     document.documentElement.classList.add('site-dark');
+
+    const toggleHandler = () => {
+      setIsDark(prev => !prev);
+    };
+    window.addEventListener('toggleSiteTheme', toggleHandler);
+    return () => window.removeEventListener('toggleSiteTheme', toggleHandler);
   }, []);
 
   return (
@@ -1143,7 +1150,7 @@ export default function App() {
           <ProjectsSection />
           <DesignProcessSection />
           <DesignToolsSection />
-          <ThemeToggle isDark={isDark} onToggle={() => setIsDark(!isDark)} />
+          <WhatsAppButton isDark={isDark} />
         </div>
       </div>
     </ThemeContext.Provider>
