@@ -349,8 +349,8 @@ function HeroSection() {
         className="absolute left-1/2 -translate-x-1/2 z-20 cursor-pointer overflow-visible"
         style={{
           bottom: 0,
-          width: "clamp(260px, 28vw, 500px)",
-          height: "clamp(320px, 38vw, 580px)",
+          width: "clamp(260px, 23vw, 420px)",
+          height: "clamp(320px, 32vw, 520px)",
         }}
         initial="rest"
         whileHover="hover"
