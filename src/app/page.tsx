@@ -1088,7 +1088,7 @@ function Preloader({ onComplete }: { onComplete: () => void }) {
 function WhatsAppButton({ isDark }: { isDark: boolean }) {
   return (
     <motion.a
-      href="https://wa.me/98089297628"
+      href="https://wa.me/+918089297628"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Contact on WhatsApp"
