@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabase";
 export default function ProjectPage() {
   const { slug } = useParams();
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const [dateStr, setDateStr] = useState("");
   const [showContent, setShowContent] = useState(false);
   const [project, setProject] = useState<any | null>(null);
@@ -199,7 +200,7 @@ export default function ProjectPage() {
                     whileInView={{ scale: 1, opacity: 1, y: 0 }}
                     viewport={{ once: false, margin: "-50px" }}
                     transition={{ duration: 1, ease: "easeOut", delay: 0.1 * idx }}
-                    className="w-full h-auto rounded-[30px] md:rounded-[40px] overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0 shadow-lg"
+                    className="w-full h-auto overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0"
                   >
                     <img src={img} alt={`${project?.title} - ${idx + 1}`} className="w-full h-auto object-cover" />
                   </motion.div>
@@ -210,7 +211,7 @@ export default function ProjectPage() {
                   whileInView={{ scale: 1, opacity: 1, y: 0 }}
                   viewport={{ once: false, margin: "-50px" }}
                   transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
-                  className="w-full h-auto rounded-[30px] md:rounded-[40px] overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0 shadow-lg"
+                  className="w-full h-auto overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0"
                 >
                   <img src={project?.image_url || "/portfolio.png"} alt={project?.title || "Portfolio"} className="w-full h-auto object-cover" />
                 </motion.div>
@@ -306,13 +307,28 @@ export default function ProjectPage() {
 
               <div className="w-full flex justify-center">
                 <button
-                  className="w-full max-w-[90%] py-[10px] border border-gray-300 rounded-full font-semibold text-black text-[13px] flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
+                  className={`w-full max-w-[90%] py-[10px] border rounded-full font-semibold text-[13px] flex items-center justify-center gap-2 transition-all duration-300 ${
+                    isCopied
+                      ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00a800]"
+                      : "border-gray-300 text-black hover:bg-gray-50"
+                  }`}
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
+                    setIsCopied(true);
+                    setTimeout(() => setIsCopied(false), 2000);
                   }}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                  Copy Link
+                  {isCopied ? (
+                    <>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Link Copied!
+                    </>
+                  ) : (
+                    <>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                      Copy Link
+                    </>
+                  )}
                 </button>
               </div>
             </motion.div>

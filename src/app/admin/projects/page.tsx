@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Trash2, Image as ImageIcon, X, LogOut, ExternalLink, Loader2 } from "lucide-react";
+import { Plus, Trash2, Image as ImageIcon, X, LogOut, ExternalLink, Loader2, GripVertical } from "lucide-react";
 
 interface Project {
   id: number;
@@ -34,10 +34,14 @@ export default function AdminProjects() {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState("");
 
-  // Gallery State
-  const [images, setImages] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [existingGalleryUrls, setExistingGalleryUrls] = useState<string[]>([]);
+  // Gallery State — unified list of { type: 'existing', url } | { type: 'new', file, preview }
+  type GalleryItem =
+    | { type: "existing"; url: string }
+    | { type: "new"; file: File; preview: string };
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [removedStorageUrls, setRemovedStorageUrls] = useState<string[]>([]);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   useEffect(() => {
     checkUser();
@@ -76,7 +80,7 @@ export default function AdminProjects() {
     setDescription(project.description);
     setExistingThumbnailUrl(project.thumbnail_url || project.image_url || "");
     setThumbnailPreview(project.thumbnail_url || project.image_url || "");
-    setExistingGalleryUrls(project.images || []);
+    setGalleryItems((project.images || []).map((url: string) => ({ type: "existing" as const, url })));
     setIsModalOpen(true);
   };
 
@@ -88,9 +92,8 @@ export default function AdminProjects() {
     setThumbnail(null);
     setThumbnailPreview(null);
     setExistingThumbnailUrl("");
-    setImages([]);
-    setPreviews([]);
-    setExistingGalleryUrls([]);
+    setGalleryItems([]);
+    setRemovedStorageUrls([]);
   };
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,16 +107,40 @@ export default function AdminProjects() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
-      setImages(prev => [...prev, ...selectedFiles]);
-
-      const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
-      setPreviews(prev => [...prev, ...newPreviews]);
+      const newItems = selectedFiles.map(file => ({
+        type: "new" as const,
+        file,
+        preview: URL.createObjectURL(file),
+      }));
+      setGalleryItems(prev => [...prev, ...newItems]);
     }
   };
 
-  const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-    setPreviews(prev => prev.filter((_, i) => i !== index));
+  const removeGalleryItem = (index: number) => {
+    setGalleryItems(prev => {
+      const item = prev[index];
+      // Queue existing (already-uploaded) images for storage deletion on save
+      if (item && item.type === "existing") {
+        setRemovedStorageUrls(urls => [...urls, item.url]);
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  // Drag-and-drop reorder handlers
+  const handleDragStart = (index: number) => setDragIndex(index);
+  const handleDragEnter = (index: number) => setDragOverIndex(index);
+  const handleDragEnd = () => {
+    if (dragIndex !== null && dragOverIndex !== null && dragIndex !== dragOverIndex) {
+      setGalleryItems(prev => {
+        const updated = [...prev];
+        const [moved] = updated.splice(dragIndex, 1);
+        updated.splice(dragOverIndex, 0, moved);
+        return updated;
+      });
+    }
+    setDragIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,7 +149,25 @@ export default function AdminProjects() {
 
     try {
       let finalThumbnailUrl = existingThumbnailUrl;
-      const galleryUrls: string[] = [...existingGalleryUrls];
+
+      // 0. Delete removed gallery images from storage
+      if (removedStorageUrls.length > 0) {
+        const pathsToDelete = removedStorageUrls
+          .map(url => {
+            const fileName = url.split('/').pop();
+            return fileName ? `project-images/${fileName}` : null;
+          })
+          .filter(Boolean) as string[];
+
+        if (pathsToDelete.length > 0) {
+          const { error: deleteError } = await supabase.storage
+            .from("projects")
+            .remove(pathsToDelete);
+          if (deleteError) {
+            console.warn("Storage cleanup warning:", deleteError.message);
+          }
+        }
+      }
 
       // 1. Upload Thumbnail if changed
       if (thumbnail) {
@@ -143,23 +188,28 @@ export default function AdminProjects() {
         finalThumbnailUrl = publicUrl;
       }
 
-      // 2. Upload Gallery Images
-      for (const img of images) {
-        const fileExt = img.name.split('.').pop();
-        const fileName = `gallery-${Math.random()}.${fileExt}`;
-        const filePath = `project-images/${fileName}`;
+      // 2. Resolve gallery items in order (upload new ones, keep existing URLs)
+      const galleryUrls: string[] = [];
+      for (const item of galleryItems) {
+        if (item.type === "existing") {
+          galleryUrls.push(item.url);
+        } else {
+          const fileExt = item.file.name.split('.').pop();
+          const fileName = `gallery-${Math.random()}.${fileExt}`;
+          const filePath = `project-images/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from("projects")
-          .upload(filePath, img);
+          const { error: uploadError } = await supabase.storage
+            .from("projects")
+            .upload(filePath, item.file);
 
-        if (uploadError) throw uploadError;
+          if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("projects")
-          .getPublicUrl(filePath);
+          const { data: { publicUrl } } = supabase.storage
+            .from("projects")
+            .getPublicUrl(filePath);
 
-        galleryUrls.push(publicUrl);
+          galleryUrls.push(publicUrl);
+        }
       }
 
       const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
@@ -392,20 +442,51 @@ export default function AdminProjects() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs md:text-sm font-medium text-white/60 ml-1">Gallery</label>
+                  <label className="text-xs md:text-sm font-medium text-white/60 ml-1">
+                    Gallery
+                    {galleryItems.length > 0 && (
+                      <span className="ml-2 text-white/30 font-normal">({galleryItems.length}) — drag to reorder</span>
+                    )}
+                  </label>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-4">
-                    {existingGalleryUrls.map((url, i) => (
-                      <div key={`existing-${i}`} className="aspect-square relative rounded-lg md:rounded-xl overflow-hidden border border-white/10 opacity-70">
-                        <img src={url} className="w-full h-full object-cover" />
-                      </div>
-                    ))}
-                    {previews.map((url, i) => (
-                      <div key={`preview-${i}`} className="aspect-square relative rounded-lg md:rounded-xl overflow-hidden border border-white/10">
-                        <img src={url} className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => removeImage(i)} className="absolute top-0.5 right-0.5 md:top-1 md:right-1 p-1 bg-red-500 rounded-full text-white"><X size={10} /></button>
-                      </div>
-                    ))}
-                    <div className="aspect-square relative cursor-pointer border border-dashed border-white/20 rounded-lg md:rounded-xl flex items-center justify-center hover:bg-white/5">
+                    {galleryItems.map((item, i) => {
+                      const src = item.type === "existing" ? item.url : item.preview;
+                      const isDragging = dragIndex === i;
+                      const isOver = dragOverIndex === i;
+                      return (
+                        <div
+                          key={i}
+                          draggable
+                          onDragStart={() => handleDragStart(i)}
+                          onDragEnter={() => handleDragEnter(i)}
+                          onDragEnd={handleDragEnd}
+                          onDragOver={(e) => e.preventDefault()}
+                          className={`aspect-square relative rounded-lg md:rounded-xl overflow-hidden border transition-all cursor-grab active:cursor-grabbing select-none
+                            ${isDragging ? "opacity-40 scale-95" : "opacity-100 scale-100"}
+                            ${isOver && !isDragging ? "border-[#00ff00]/60 ring-2 ring-[#00ff00]/30" : "border-white/10"}`}
+                        >
+                          <img src={src} className="w-full h-full object-cover pointer-events-none" />
+                          {/* Close button */}
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryItem(i)}
+                            className="absolute top-0.5 right-0.5 md:top-1 md:right-1 p-1 bg-black/70 hover:bg-red-500 rounded-full text-white transition-colors z-10"
+                            aria-label="Remove image"
+                          >
+                            <X size={10} />
+                          </button>
+                          {/* Drag handle indicator */}
+                          <div className="absolute bottom-0.5 left-0.5 md:bottom-1 md:left-1 p-0.5 bg-black/50 rounded text-white/50 pointer-events-none">
+                            <GripVertical size={10} />
+                          </div>
+                          {item.type === "existing" && (
+                            <div className="absolute bottom-0.5 right-0.5 md:bottom-1 md:right-1 w-1.5 h-1.5 rounded-full bg-[#00ff00]/60" title="Saved" />
+                          )}
+                        </div>
+                      );
+                    })}
+                    {/* Add more images */}
+                    <div className="aspect-square relative cursor-pointer border border-dashed border-white/20 rounded-lg md:rounded-xl flex items-center justify-center hover:bg-white/5 transition-colors">
                       <input type="file" multiple accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                       <Plus size={18} className="text-white/20" />
                     </div>
