@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, Trash2, Image as ImageIcon, X, LogOut, ExternalLink, Loader2, GripVertical } from "lucide-react";
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '@/lib/cropImage';
 
 interface Project {
   id: number;
@@ -34,6 +36,14 @@ export default function AdminProjects() {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState("");
 
+  // Crop State
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const [rawThumbnailUrl, setRawThumbnailUrl] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [isCropping, setIsCropping] = useState(false);
+
   // Gallery State — unified list of { type: 'existing', url } | { type: 'new', file, preview }
   type GalleryItem =
     | { type: "existing"; url: string }
@@ -47,6 +57,17 @@ export default function AdminProjects() {
     checkUser();
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    if (isModalOpen || isCropModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen, isCropModalOpen]);
 
   const checkUser = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -94,13 +115,39 @@ export default function AdminProjects() {
     setExistingThumbnailUrl("");
     setGalleryItems([]);
     setRemovedStorageUrls([]);
+    setRawThumbnailUrl(null);
+    setZoom(1);
+    setCrop({ x: 0, y: 0 });
   };
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setThumbnail(file);
-      setThumbnailPreview(URL.createObjectURL(file));
+      setRawThumbnailUrl(URL.createObjectURL(file));
+      setIsCropModalOpen(true);
+      e.target.value = '';
+    }
+  };
+
+  const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const handleCropSave = async () => {
+    if (!rawThumbnailUrl || !croppedAreaPixels) return;
+    setIsCropping(true);
+    try {
+      const croppedFile = await getCroppedImg(rawThumbnailUrl, croppedAreaPixels);
+      if (croppedFile) {
+        setThumbnail(croppedFile);
+        setThumbnailPreview(URL.createObjectURL(croppedFile));
+        setIsCropModalOpen(false);
+      }
+    } catch (e) {
+      console.error(e);
+      setActionError("Failed to crop image.");
+    } finally {
+      setIsCropping(false);
     }
   };
 
@@ -431,7 +478,22 @@ export default function AdminProjects() {
                   <div className="relative cursor-pointer group w-full aspect-[21/9] rounded-xl md:rounded-2xl overflow-hidden border border-dashed border-white/20 bg-white/5 hover:bg-white/10 flex items-center justify-center">
                     <input type="file" accept="image/*" onChange={handleThumbnailChange} className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" />
                     {thumbnailPreview ? (
-                      <img src={thumbnailPreview} className="w-full h-full object-cover" />
+                      <>
+                        <img src={thumbnailPreview} className="w-full h-full object-cover pointer-events-none" />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setRawThumbnailUrl(thumbnailPreview);
+                            setIsCropModalOpen(true);
+                          }}
+                          className="absolute top-2 right-2 z-20 px-3 py-1.5 bg-black/60 hover:bg-black/90 backdrop-blur-sm text-white text-xs font-bold rounded-lg transition-all flex items-center gap-2 opacity-0 group-hover:opacity-100"
+                        >
+                          <ImageIcon size={14} />
+                          Adjust Crop
+                        </button>
+                      </>
                     ) : (
                       <div className="flex flex-col items-center">
                         <ImageIcon className="text-white/20 mb-1 md:mb-2" size={28} />
@@ -497,6 +559,70 @@ export default function AdminProjects() {
                   {isSubmitting ? <Loader2 className="animate-spin m-auto" size={20} /> : (editingId ? "Update" : "Save")}
                 </button>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isCropModalOpen && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/95 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-3xl bg-[#141827] border border-white/10 rounded-[28px] shadow-2xl relative z-10 overflow-hidden flex flex-col h-[80vh]"
+            >
+              <div className="p-5 border-b border-white/10 flex items-center justify-between shrink-0">
+                <h2 className="text-xl font-bold font-['Outfit'] text-white">Crop Thumbnail</h2>
+                <button type="button" onClick={() => setIsCropModalOpen(false)} aria-label="Close modal" className="p-2 hover:bg-white/5 rounded-full transition-colors text-white">
+                  <X size={20} aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="relative flex-1 w-full bg-black touch-none overscroll-none">
+                {rawThumbnailUrl && (
+                  <Cropper
+                    image={rawThumbnailUrl}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1.25}
+                    onCropChange={setCrop}
+                    onCropComplete={onCropComplete}
+                    onZoomChange={setZoom}
+                  />
+                )}
+              </div>
+
+              <div className="p-5 border-t border-white/10 flex flex-col sm:flex-row items-center gap-4 shrink-0">
+                <div className="w-full sm:w-1/2 flex items-center gap-3">
+                  <span className="text-xs text-white/50">Zoom</span>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    aria-labelledby="Zoom"
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCropSave}
+                  disabled={isCropping}
+                  className="w-full sm:w-auto sm:ml-auto px-6 py-2.5 bg-[#00ff00] hover:bg-[#00dd00] text-black font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center"
+                >
+                  {isCropping ? <Loader2 className="animate-spin w-5 h-5" /> : "Crop & Save"}
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
