@@ -689,7 +689,7 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
     >
       <a
         href={`/projects/${project.slug}`}
-        className={`block relative w-full min-h-[450px] md:min-h-[550px] rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row border shadow-2xl transition-all duration-500 cursor-none ${isDark
+        className={`block relative w-full lg:h-[450px] rounded-2xl overflow-hidden flex flex-col lg:flex-row border shadow-2xl transition-all duration-500 cursor-none ${isDark
           ? "bg-[#2D2D36] border-white/10"
           : "bg-[#f5f5f7] border-black/5"
           }`}
@@ -700,7 +700,7 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
       >
         {/* Blob Effect */}
         <motion.div
-          className="pointer-events-none absolute -inset-px rounded-[2.5rem] opacity-0 transition duration-300 group-hover:opacity-100 z-0"
+          className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition duration-300 group-hover:opacity-100 z-0"
           style={{
             background: useMotionTemplate`
               radial-gradient(
@@ -712,7 +712,7 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
           }}
         />
         {/* Content Side */}
-        <div className={`w-full lg:w-[50%] flex flex-col justify-center p-8 md:p-12 lg:p-16 ${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'} relative z-10`}>
+        <div className={`w-full lg:w-[50%] flex flex-col justify-center py-5 pl-5 pr-4 ${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'} relative z-10`}>
           <div className="flex flex-wrap gap-3 mb-6">
             {(project.category || "Project").split(',').map((cat: string, i: number) => (
               <span key={i} className="bg-[#00ff00] text-black text-xs md:text-sm font-bold px-4 py-1.5 rounded-full">
@@ -748,12 +748,12 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
         </div>
 
         {/* Image Side */}
-        <div className={`relative w-full lg:w-[50%] min-h-[300px] flex items-center justify-center p-4 md:p-8 ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} z-10`}>
+        <div className={`w-full lg:w-[50%] min-h-[300px] lg:min-h-0 lg:h-full flex items-center justify-center p-4 ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} z-10`}>
           <div className="relative w-full h-full rounded-2xl overflow-hidden">
             <img
               src={project.image_url || "/branding.svg"}
               alt={project.title}
-              className="w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
         </div>

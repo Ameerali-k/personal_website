@@ -369,13 +369,13 @@ export default function AdminProjects() {
                 </div>
                 <div className="p-5 md:p-6">
                   <div className="flex items-center justify-between">
-                  <div className="flex flex-wrap gap-2">
-                    {project.category.split(',').map((cat: string, i: number) => (
-                      <span key={i} className="text-[#00ff00] text-[10px] md:text-xs font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-md">
-                        {cat.trim()}
-                      </span>
-                    ))}
-                  </div>
+                    <div className="flex flex-wrap gap-2">
+                      {project.category.split(',').map((cat: string, i: number) => (
+                        <span key={i} className="text-[#00ff00] text-[10px] md:text-xs font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-md">
+                          {cat.trim()}
+                        </span>
+                      ))}
+                    </div>
                     <span className="text-white/30 text-[11px] md:text-xs uppercase font-bold">{project.images?.length || 0} Gallery</span>
                   </div>
                   <h3 className="text-lg md:text-xl font-bold mt-2 font-['Outfit'] line-clamp-1">{project.title}</h3>
