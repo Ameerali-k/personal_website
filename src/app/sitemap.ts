@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 import { supabase } from '@/lib/supabase';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Use the site URL from environment variables, fallback to localhost for development
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  // Use the site URL from environment variables, fallback to production URL
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ameeralik.com';
 
   // Fetch all projects to generate dynamic routes
   const { data: projects, error } = await supabase
