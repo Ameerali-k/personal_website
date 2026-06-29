@@ -79,7 +79,7 @@ export default function ProjectPage() {
       <Link
         href="/#projects"
         aria-label="Go back to projects"
-        className="absolute top-8 left-8 z-50 flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-[#00ff00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00ff00] transition-colors rounded-full text-black shadow-sm"
+        className="absolute top-8 left-8 z-10 flex items-center justify-center w-12 h-12 bg-gray-100 hover:bg-[#00ff00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00ff00] transition-colors rounded-full text-black shadow-sm"
         onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Go back", shape: "circle" } }))}
         onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
       >
@@ -93,16 +93,16 @@ export default function ProjectPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 1.0 }}
-          className="flex gap-4 mb-6"
+          className="flex gap-4 mb-6 max-w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] px-6 md:px-0"
         >
           {(project?.category || "Project").split(',').map((cat: string, i: number) => (
-            <div key={i} className="px-5 py-2 bg-[#00ff00] text-black font-semibold rounded-[4px] text-xs md:text-sm shadow-sm tracking-wide">
+            <div key={i} className="px-5 py-2 bg-[#00ff00] text-black font-semibold rounded-[4px] text-xs md:text-sm shadow-sm tracking-wide whitespace-nowrap shrink-0">
               {cat.trim()}
             </div>
           ))}
           <button
             onClick={() => setIsShareOpen(true)}
-            className="px-5 py-2 bg-white border border-gray-300 text-black font-semibold rounded-[4px] text-xs md:text-sm flex items-center gap-2 hover:bg-gray-50 transition-colors shadow-sm tracking-wide"
+            className="px-5 py-2 bg-white border border-gray-300 text-black font-semibold rounded-[4px] text-xs md:text-sm flex items-center gap-2 hover:bg-gray-50 transition-colors shadow-sm tracking-wide shrink-0 whitespace-nowrap"
             onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Share", shape: "circle" } }))}
             onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
           >
