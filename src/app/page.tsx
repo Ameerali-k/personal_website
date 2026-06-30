@@ -748,8 +748,8 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
         </div>
 
         {/* Image Side */}
-        <div className={`w-full lg:w-[50%] min-h-[300px] lg:min-h-0 lg:h-full flex items-center justify-center p-4 ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} z-10`}>
-          <div className="relative w-full h-full rounded-2xl overflow-hidden">
+        <div className={`w-full lg:w-[50%] lg:h-full flex items-center justify-center p-4 ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} z-10`}>
+          <div className="relative w-full h-full min-h-[250px] sm:min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden">
             <img
               src={project.image_url || "/branding.svg"}
               alt={project.title}
