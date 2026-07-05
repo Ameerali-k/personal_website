@@ -194,27 +194,19 @@ export default function ProjectPage() {
             <div className="w-full max-w-[1300px] flex flex-col gap-8 mb-32">
               {project?.images && Array.isArray(project.images) && project.images.length > 0 ? (
                 project.images.map((img: string, idx: number) => (
-                  <motion.div
+                  <div
                     key={idx}
-                    initial={{ scale: 0.9, opacity: 0, y: 50 }}
-                    whileInView={{ scale: 1, opacity: 1, y: 0 }}
-                    viewport={{ once: false, margin: "-50px" }}
-                    transition={{ duration: 1, ease: "easeOut", delay: 0.1 * idx }}
                     className="w-full h-auto overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0"
                   >
                     <img src={img} alt={`${project?.title} - ${idx + 1}`} className="w-full h-auto object-cover" />
-                  </motion.div>
+                  </div>
                 ))
               ) : (
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0, y: 50 }}
-                  whileInView={{ scale: 1, opacity: 1, y: 0 }}
-                  viewport={{ once: false, margin: "-50px" }}
-                  transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+                <div
                   className="w-full h-auto overflow-hidden border border-black/5 bg-gray-100 flex items-center justify-center p-0"
                 >
                   <img src={project?.image_url || "/portfolio.png"} alt={project?.title || "Portfolio"} className="w-full h-auto object-cover" />
-                </motion.div>
+                </div>
               )}
             </div>
           </motion.div>

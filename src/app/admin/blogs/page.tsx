@@ -19,6 +19,7 @@ export default function AdminBlogs() {
 
   // Form State
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
 
@@ -79,6 +80,7 @@ export default function AdminBlogs() {
   const handleEdit = (blog: any) => {
     setEditingId(blog.id);
     setTitle(blog.title);
+    setSlug(blog.slug || "");
     setDescription(blog.description);
     setContent(blog.content);
     setExistingThumbnailUrl(blog.image_url || "");
@@ -89,6 +91,7 @@ export default function AdminBlogs() {
   const resetForm = () => {
     setEditingId(null);
     setTitle("");
+    setSlug("");
     setDescription("");
     setContent("");
     setThumbnail(null);
@@ -156,14 +159,16 @@ export default function AdminBlogs() {
         finalThumbnailUrl = publicUrl;
       }
 
-      const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+      const finalSlug = slug.trim() !== "" 
+        ? slug.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")
+        : title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
 
       const blogData = {
         title,
         description,
         content,
         image_url: finalThumbnailUrl,
-        slug
+        slug: finalSlug
       };
 
       if (editingId) {
@@ -338,6 +343,11 @@ export default function AdminBlogs() {
                 <div className="space-y-2">
                   <label className="text-xs md:text-sm font-medium text-white/60 ml-1">Title</label>
                   <input required value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-2.5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-[#00ff00]/50" />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs md:text-sm font-medium text-white/60 ml-1">Slug (optional)</label>
+                  <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="Leave blank to auto-generate from title" className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-2.5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-[#00ff00]/50" />
                 </div>
 
                 <div className="space-y-2">
