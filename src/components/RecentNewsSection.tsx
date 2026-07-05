@@ -47,7 +47,7 @@ export function RecentNewsSection() {
         .select('*')
         .order('created_at', { ascending: false })
         .limit(4);
-      
+
       if (data && !error) {
         setBlogs(data);
       }
@@ -91,14 +91,14 @@ export function RecentNewsSection() {
               {blogs.map((item, index) => (
                 <Link href={`/blog/${item.slug}`} key={item.id} className="block group">
                   <motion.div
-                    className="relative shrink-0 w-[280px] md:w-[300px] h-[400px] snap-center rounded-[40px] overflow-hidden border-[15px] border-black dark:border-white flex flex-col justify-end p-6 bg-white dark:bg-black"
+                    className="relative shrink-0 w-[280px] md:w-[300px] h-[400px] snap-center rounded-[20px] overflow-hidden border-[5px] border-black dark:border-white flex flex-col justify-end p-6 bg-white dark:bg-black"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                   >
                     {/* Full Background Image */}
-                    <div className="absolute inset-0 z-0 rounded-[25px] overflow-hidden">
+                    <div className="absolute inset-0 z-0 overflow-hidden">
                       <Image
                         src={item.image_url || "/portfolio.png"}
                         alt={item.title}
@@ -108,12 +108,12 @@ export function RecentNewsSection() {
                     </div>
 
                     {/* Gradient overlay */}
-                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-black dark:via-black/80 dark:to-transparent rounded-[25px]"></div>
+                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-black dark:via-black/80 dark:to-transparent"></div>
 
                     {/* Content */}
                     <div className="relative z-20 flex flex-col mt-auto pointer-events-none">
-                      <h3 className="text-black dark:text-white text-lg font-bold leading-tight uppercase mb-3">
-                        {item.title}
+                      <h3 className="text-black dark:text-white text-lg font-bold leading-tight uppercase mb-3" title={item.title}>
+                        {item.title?.length > 40 ? item.title.substring(0, 40) + '...' : item.title}
                       </h3>
                       <p className="text-gray-700 dark:text-[#d0d0d0] text-xs leading-relaxed mb-6 drop-shadow-md line-clamp-3">
                         {item.description}
