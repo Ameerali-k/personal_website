@@ -6,6 +6,7 @@ import { ContactSection } from "./ContactSection";
 import { FooterSection } from "./FooterSection";
 import { CustomCursor } from "./CustomCursor";
 import { TestimonialsSection } from "./TestimonialsSection";
+import { RecentNewsSection } from "./RecentNewsSection";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -17,11 +18,12 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
-      <CustomCursor />
+      {!pathname?.startsWith("/blog/") && <CustomCursor />}
       <Header />
       {children}
-      {!pathname?.startsWith("/projects/") && <TestimonialsSection />}
-      <ContactSection />
+      {!pathname?.startsWith("/projects/") && !pathname?.startsWith("/blog/") && <TestimonialsSection />}
+      {!pathname?.startsWith("/projects/") && !pathname?.startsWith("/blog/") && <RecentNewsSection />}
+      {!pathname?.startsWith("/projects/") && !pathname?.startsWith("/blog/") && <ContactSection />}
       <FooterSection />
     </>
   );

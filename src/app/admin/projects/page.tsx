@@ -359,6 +359,10 @@ export default function AdminProjects() {
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent" style={{ fontFamily: "'Outfit', sans-serif" }}>
               Dashboard
             </h1>
+            <div className="flex items-center justify-center sm:justify-start gap-4 mt-3 mb-1">
+              <span className="text-[#00ff00] font-medium border-b border-[#00ff00] pb-1">Projects</span>
+              <a href="/admin/blogs" className="text-white/50 hover:text-white transition-colors pb-1">Blogs</a>
+            </div>
             <p className="text-white/40 mt-1 text-sm md:text-base">Manage your portfolio projects</p>
           </div>
           <div className="flex items-center justify-center gap-3">
