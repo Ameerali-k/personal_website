@@ -69,6 +69,7 @@ export function RecentNewsSection() {
           src="/line.png"
           alt="Decorative Line"
           fill
+          sizes="100vw"
           className="object-cover opacity-100"
           priority
         />
@@ -103,6 +104,7 @@ export function RecentNewsSection() {
                         src={item.image_url || "/portfolio.png"}
                         alt={item.title}
                         fill
+                        sizes="(max-width: 768px) 280px, 300px"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>

@@ -14,7 +14,7 @@ const ProjectCard = ({ title, description, tags, imageSrc, reverseLayout = false
     <div className="bg-[#050505] rounded-[2.5rem] w-full max-w-[1200px] mx-auto flex flex-col lg:flex-row overflow-hidden border border-white/10 mb-12 shadow-2xl">
       {/* Image container */}
       <div className={`relative w-full lg:w-[50%] min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] ${reverseLayout ? 'lg:order-2' : 'lg:order-1'}`}>
-        <Image src={imageSrc} alt={title} fill className="object-cover" />
+        <Image src={imageSrc} alt={title} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
       </div>
 
       {/* Content container */}

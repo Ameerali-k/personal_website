@@ -58,6 +58,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
                 src={blog.image_url || "/portfolio.png"}
                 alt={blog.title}
                 fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1200px) 90vw, 1200px"
                 className="object-cover"
                 priority
               />
