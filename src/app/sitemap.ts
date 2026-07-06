@@ -6,16 +6,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ameeralik.com';
 
   // Fetch all projects to generate dynamic routes
-  const { data: projects, error } = await supabase
+  const { data: projects, error: projectsError } = await supabase
     .from('projects')
     .select('slug, updated_at, created_at');
 
   let projectUrls: MetadataRoute.Sitemap = [];
   
-  if (projects && !error) {
+  if (projects && !projectsError) {
     projectUrls = projects.map((project) => ({
       url: `${baseUrl}/projects/${project.slug}`,
       lastModified: project.updated_at || project.created_at || new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }));
+  }
+
+  // Fetch all blogs to generate dynamic routes
+  const { data: blogs, error: blogsError } = await supabase
+    .from('blogs')
+    .select('slug, updated_at, created_at');
+
+  let blogUrls: MetadataRoute.Sitemap = [];
+  
+  if (blogs && !blogsError) {
+    blogUrls = blogs.map((blog) => ({
+      url: `${baseUrl}/blog/${blog.slug}`,
+      lastModified: blog.updated_at || blog.created_at || new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
@@ -31,5 +47,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   ];
 
-  return [...routes, ...projectUrls];
+  return [...routes, ...projectUrls, ...blogUrls];
 }
