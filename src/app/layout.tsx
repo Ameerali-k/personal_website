@@ -8,7 +8,7 @@ export const metadata = {
   description: "Ameerali is a creative graphic designer and web developer specialising in branding, UI/UX design, and digital experiences.",
 };
 
-const GTM_ID = "GTM-P3D854TX";
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID!
 
 export default function RootLayout({
   children,
