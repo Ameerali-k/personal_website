@@ -1,4 +1,4 @@
-'use client'
+// Server Component
 
 export function GTMScript({ gtmId }: { gtmId: string }) {
   return (
