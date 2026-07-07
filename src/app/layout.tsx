@@ -1,8 +1,6 @@
 import "../styles/index.css";
-import { CustomCursor } from "../components/CustomCursor";
 import LayoutWrapper from "../components/LayoutWrapper";
-import { GTMScript, GTMNoScript } from "@/components/GoogleTagManager";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 
 export const metadata = {
   title: "Ameerali — Graphic Designer & Web Developer",
@@ -19,12 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <GTMScript gtmId={GTM_ID} />
-        <GoogleAnalytics gaId={GA_ID} />
-      </head>
+      <GoogleTagManager gtmId={GTM_ID} />
+      <GoogleAnalytics gaId={GA_ID} />
       <body>
-        <GTMNoScript gtmId={GTM_ID} />
         <LayoutWrapper>
           {children}
         </LayoutWrapper>

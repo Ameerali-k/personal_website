@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useState, useRef, createContext, useContext } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useInView, animate, useMotionValue, useSpring, useMotionTemplate } from "motion/react";
 import imgWhatsApp from "figma:asset/2c5a6bc55984a9012693543c79e3a6248281632d.png";
@@ -11,9 +12,13 @@ import imgLogoAvatar from "figma:asset/67b3b0749a2c1ad0580b543246a797b39269c8a6.
 import { fetchProjects, hasWordPressEndpoint, type CmsProjectSummary } from "../lib/wordpress";
 import { supabase } from "@/lib/supabase";
 
-// ─── Theme Context ───
-const ThemeContext = createContext<boolean>(true); // default dark
-function useTheme() { return useContext(ThemeContext); }
+import dynamic from 'next/dynamic';
+const ProjectsSection = dynamic(() => import('../components/sections/ProjectsSection'), { ssr: false });
+const DesignProcessSection = dynamic(() => import('../components/sections/DesignProcessSection'), { ssr: false });
+const DesignToolsSection = dynamic(() => import('../components/sections/DesignToolsSection'), { ssr: false });
+
+
+import { ThemeContext, useTheme } from "../components/sections/ThemeContext";
 
 // Roles that cycle every 3 seconds
 const roles = [
@@ -247,12 +252,11 @@ function SkillsStrip() {
 function CircularText() {
   return (
     <div className="relative w-[155px] h-[155px]">
-      <motion.img
+      <img
         src="/Round.png"
         alt="Create More Think Less"
-        className="absolute inset-0 w-full h-full"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        className="absolute inset-0 w-full h-full animate-spin"
+        style={{ animationDuration: "12s" }}
       />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="w-[89px] h-[89px] rounded-full bg-transparent shadow-none" />
@@ -392,10 +396,12 @@ function HeroSection() {
 
         {/* Foreground Photo */}
         <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden" style={{ bottom: 0 }}>
-          <img
+          <Image
             src={String((imgWhatsApp as any).src || imgWhatsApp)}
             alt="Ameerali"
-            className="w-full h-full object-cover object-top"
+            fill
+            priority
+            className="object-cover object-top"
             style={{ filter: "grayscale(100%)" }}
           />
         </div>
@@ -428,6 +434,8 @@ function HeroSection() {
               key={i}
               src={String((src as any).src || src)}
               alt={`Client ${i + 1}`}
+              width={56}
+              height={56}
               className="w-14 h-14 rounded-full border-2 border-white object-cover"
               style={{ marginLeft: i === 0 ? 0 : "-18px" }}
             />
@@ -639,354 +647,8 @@ function ServicesSection() {
   );
 }
 
-/* ─── Projects Section ─── */
-interface SupabaseProject {
-  id: number;
-  title: string;
-  category: string;
-  description: string;
-  image_url: string;
-  slug: string;
-}
 
-const fallbackProjects: any[] = [
-  { id: 1, slug: "branding", title: "Branding", category: "Branding", description: "", image_url: "/branding.svg" },
-  { id: 2, slug: "web-design-development", title: "Web Design & Development", category: "Web Design", description: "", image_url: "/Web design.svg" },
-  { id: 3, slug: "graphic-designing", title: "Graphic Designing", category: "Graphic Design", description: "", image_url: "/Graphic design.svg" },
-  { id: 4, slug: "motion-graphics", title: "Motion Graphics", category: "Motion Graphics", description: "", image_url: "/motion graphics.svg" },
-  { id: 5, slug: "presentation-design", title: "Presentation Design", category: "Presentation", description: "", image_url: "/presentation design.svg" },
-  { id: 6, slug: "packaging", title: "Packaging", category: "Packaging", description: "", image_url: "/packaging.svg" },
-  { id: 7, slug: "video-editing", title: "Video Editing", category: "Video Editing", description: "", image_url: "/video editing.svg" },
-];
 
-function ProjectCard({ project, index, scrollYProgress, totalProjects }: { project: any; index: number; scrollYProgress: any, totalProjects: number }) {
-  const isDark = useTheme();
-  const start = index / totalProjects;
-  const end = (index + 1) / totalProjects;
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  }
-
-  // Create a transform for each card's scale based on its position in the scroll
-  // We want the card to scale down slightly as we scroll further past it
-  const scale = useTransform(scrollYProgress, [start, end], [1, 0.95]);
-
-  return (
-    <motion.div
-      style={{
-        scale,
-        top: `calc(15vh + ${index * 40}px)`,
-        zIndex: index
-      }}
-      onMouseMove={handleMouseMove}
-      className="sticky w-full max-w-[1100px] mx-auto mb-[15vh] group"
-    >
-      <a
-        href={`/projects/${project.slug}`}
-        className={`block relative w-full lg:h-[450px] rounded-2xl overflow-hidden flex flex-col lg:flex-row border shadow-2xl transition-all duration-500 cursor-none ${isDark
-          ? "bg-[#2D2D36] border-white/10"
-          : "bg-[#f5f5f7] border-black/5"
-          }`}
-        data-cursor-text="Explore"
-        data-cursor-shape="circle"
-        onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Explore", shape: "circle" } }))}
-        onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
-      >
-        {/* Blob Effect */}
-        <motion.div
-          className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition duration-300 group-hover:opacity-100 z-0"
-          style={{
-            background: useMotionTemplate`
-              radial-gradient(
-                600px circle at ${mouseX}px ${mouseY}px,
-                ${isDark ? 'rgba(0, 255, 0, 0.15)' : 'rgba(83, 63, 231, 0.1)'},
-                transparent 80%
-              )
-            `,
-          }}
-        />
-        {/* Content Side */}
-        <div className={`w-full lg:w-[50%] flex flex-col justify-center py-5 pl-5 pr-4 ${index % 2 === 0 ? 'lg:order-1' : 'lg:order-2'} relative z-10`}>
-          <div className="flex flex-wrap gap-3 mb-6">
-            {(project.category || "Project").split(',').map((cat: string, i: number) => (
-              <span key={i} className="bg-[#00ff00] text-black text-xs md:text-sm font-bold px-4 py-1.5 rounded-full">
-                {cat.trim()}
-              </span>
-            ))}
-          </div>
-
-          <h3 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
-            {project.title}
-          </h3>
-
-          <p className={`text-base md:text-lg mb-8 leading-relaxed font-sans ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            {(() => {
-              const desc = project.description || "Portfolio project showcasing expertise in design and development.";
-              const words = desc.split(/\s+/);
-              if (words.length > 30) {
-                return words.slice(0, 30).join(' ') + '...';
-              }
-              return desc;
-            })()}
-          </p>
-
-          <div className="mt-auto">
-            <div className={`inline-flex items-center gap-2 font-bold text-lg px-8 py-3 rounded-lg transition-all ${isDark
-              ? "bg-gradient-to-r from-[#00ff22] to-[#00cc11] text-black shadow-[0_0_20px_rgba(0,255,0,0.3)] group-hover:shadow-[0_0_30px_rgba(0,255,0,0.5)]"
-              : "bg-black text-white shadow-lg group-hover:bg-[#533fe7]"
-              }`}>
-              View Project
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Image Side */}
-        <div className={`w-full lg:w-[50%] lg:h-full flex items-center justify-center p-4 ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} z-10`}>
-          <div className="relative w-full h-full min-h-[250px] sm:min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden">
-            <img
-              src={project.image_url || "/branding.svg"}
-              alt={project.title}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </a>
-    </motion.div>
-  );
-}
-
-function ProjectsSection() {
-  const isDark = useTheme();
-  const [projects, setProjects] = useState<any[]>([]);
-  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadProjects() {
-      try {
-        const { data, error } = await supabase
-          .from("projects")
-          .select("*")
-          .order("created_at", { ascending: true });
-
-        if (!isMounted) return;
-
-        if (error) {
-          setProjects(fallbackProjects);
-        } else if (!data || data.length === 0) {
-          setProjects([]);
-        } else {
-          setProjects(data);
-        }
-      } catch (err) {
-        if (isMounted) setProjects(fallbackProjects);
-      } finally {
-        if (isMounted) setIsLoadingProjects(false);
-      }
-    }
-
-    loadProjects();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return (
-    <section
-      ref={containerRef}
-      id="projects"
-      className={`relative transition-colors duration-500 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}
-      style={{ minHeight: projects.length > 0 ? `${projects.length * 80}vh` : 'auto' }}
-    >
-      <div className="max-w-[1200px] w-full mx-auto px-6 pt-16 md:pt-24 mb-16 text-center">
-        <AnimatedHeading
-          text="Handpicked Projects"
-          className={`font-semibold text-[2.5rem] md:text-[3.2rem] mb-6 max-w-[800px] mx-auto flex justify-center flex-wrap ${isDark ? 'text-white' : 'text-black'}`}
-          style={{ fontFamily: "'Outfit', sans-serif", lineHeight: 1.1 }}
-        />
-        <p className={`font-medium text-[1.05rem] md:text-[1.2rem] leading-relaxed mx-auto max-w-[800px] ${isDark ? 'text-white/60' : 'text-[#1d2431]'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
-          Explore my portfolio to see a blend of graphic design, motion, video editing, and web experiences. Each project reflects creativity, precision, and user-focused design.
-        </p>
-      </div>
-
-      <div className="w-full relative px-6 md:px-10">
-        {isLoadingProjects ? (
-          <div className="flex flex-col items-center gap-6 mb-20 mt-4" aria-busy="true" aria-label="Loading projects">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className={`w-full max-w-[1200px] rounded-[32px] md:rounded-[40px] overflow-hidden animate-pulse ${isDark ? 'bg-white/5' : 'bg-black/5'}`} style={{ height: '420px' }} />
-            ))}
-          </div>
-        ) : projects.length > 0 ? (
-          <div className="flex flex-col items-center">
-            {projects.map((project, index) => (
-              <ProjectCard
-                key={index}
-                project={project}
-                index={index}
-                scrollYProgress={scrollYProgress}
-                totalProjects={projects.length}
-              />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center p-12 md:p-20 bg-white/5 border border-dashed border-white/10 rounded-[40px] mb-20 md:mb-32 mt-10"
-          >
-            <p className={`text-xl md:text-3xl font-medium tracking-tight opacity-50 ${isDark ? "text-white" : "text-black"}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
-              Portfolio coming soon
-            </p>
-          </motion.div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-/* ─── Design Process Section ─── */
-const processSteps = [
-  { num: "01", title: "Understand the brief" },
-  { num: "02", title: "Research" },
-  { num: "03", title: "Brainstorm & sketch" },
-  { num: "04", title: "Create the design" },
-  { num: "05", title: "Review & refine" },
-  { num: "06", title: "Present to client" },
-  { num: "07", title: "Final export & delivery" },
-];
-
-function DesignProcessSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start center", "end center"]
-  });
-
-  const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 20, mass: 0.5 });
-
-  return (
-    <section className="w-full bg-black py-24 md:py-32 px-4 md:px-6 flex flex-col items-center overflow-hidden transition-all duration-500 rounded-[50px] mb-10 mt-10">
-      <AnimatedHeading
-        text="The Design Process"
-        className="text-white font-semibold text-[2.5rem] md:text-[3.5rem] mb-16 md:mb-24 text-center flex justify-center flex-wrap"
-        style={{ fontFamily: "'Outfit', sans-serif" }}
-      />
-
-      <div
-        ref={containerRef}
-        className="max-w-[1000px] w-full relative"
-      >
-        {/* Center line (Background) */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-[3px] bg-white/20 -translate-x-1/2" />
-
-        {/* Animated fill line */}
-        <motion.div
-          className="absolute left-1/2 top-0 bottom-0 w-[3px] bg-[#533fe7] origin-top -translate-x-1/2 z-10"
-          style={{ scaleY }}
-        />
-
-        <div className="flex flex-col gap-12 md:gap-8 w-full relative z-20 py-4">
-          {processSteps.map((step, i) => {
-            const isLeft = i % 2 === 0;
-            return (
-              <div key={i} className={`flex w-full ${isLeft ? "justify-start" : "justify-end"} items-center relative`}>
-
-                {/* Center Dot */}
-                <div className="absolute left-1/2 top-1/2 w-5 h-5 rounded-full bg-[#00ff00] shadow-[0_0_15px_rgba(0,255,0,0.5)] -translate-x-1/2 -translate-y-1/2 z-30" />
-
-                {/* Content Box */}
-                <motion.div
-                  initial={{ opacity: 0, x: isLeft ? -100 : 100 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: false, margin: "-50px" }}
-                  transition={{ duration: 0.7, ease: "easeOut", type: "spring", bounce: 0.3 }}
-                  className="w-[calc(50%-1.5rem)] md:w-[calc(50%-2.5rem)]"
-                >
-                  <div className="border border-white/20 rounded-[12px] md:rounded-[18px] p-5 md:p-6 bg-black shadow-lg">
-                    <span className="block text-[#00ff00] text-xs md:text-sm mb-1 font-semibold tracking-widest uppercase" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                      {step.num}
-                    </span>
-                    <h3 className="text-white font-bold text-base md:text-[1.25rem] tracking-wide leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                      {step.title}
-                    </h3>
-                  </div>
-                </motion.div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Design Tools Section ─── */
-
-const toolsList = [
-  { name: "Wordpress", icon: "/wordpress.svg", label: "Wordpress" },
-  { name: "HTML", icon: "/HTML.svg", label: "HTML" },
-  { name: "Java Script", icon: "/Javascript.svg", label: "Java Script" },
-  { name: "Framer", icon: "/Framer.svg", label: "Framer" },
-  { name: "postgres", icon: "/Postgres.svg", label: "postgres" },
-  { name: "CSS", icon: "/CSS.svg", label: "CSS" },
-  { name: "indesign", icon: "/indesign.svg", label: "indesign" },
-  { name: "Photoshop", icon: "/photoshop.svg", label: "Photoshop" },
-  { name: "illustrator", icon: "/illustrator.svg", label: "illustrator" },
-  { name: "Premiere Pro", icon: "/premier.svg", label: "Premiere Pro" },
-  { name: "Next Js", icon: "/nextjs.svg", label: "Next Js" },
-  { name: "React Js", icon: "/react js.svg", label: "React Js" },
-  { name: "My SQL", icon: "/mysql.svg", label: "My SQL" },
-  { name: "Canva", icon: "/Canva.svg", label: "Canva" },
-  { name: "Figma", icon: "/Figma.svg", label: "Figma" },
-];
-
-function DesignToolsSection() {
-  const isDark = useTheme();
-  return (
-    <section id="tools" className={`w-full py-24 px-6 flex flex-col items-center overflow-hidden relative transition-colors duration-500 ${isDark ? 'bg-[#0c0e1a]' : 'bg-white'}`}>
-      <AnimatedHeading
-        text="Tools & Stacks"
-        className={`font-semibold text-[2.8rem] md:text-[3.8rem] mb-12 text-center flex justify-center flex-wrap ${isDark ? 'text-white' : 'text-black'}`}
-        style={{ fontFamily: "'Outfit', sans-serif" }}
-      />
-
-      <div className={`max-w-[1200px] w-full overflow-hidden ${isDark ? 'border border-white/20' : 'border border-black'}`}>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          {toolsList.map((tool, i) => (
-            <motion.div
-              key={tool.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.5, delay: i * 0.05 }}
-              className={`group aspect-square flex flex-col items-center justify-center border transition-colors duration-300 ${isDark ? 'border-white/20 hover:bg-white/5' : 'border-black hover:bg-gray-50'}`}
-            >
-              <div className="w-16 h-16 md:w-20 md:h-20 mb-4 flex items-center justify-center transform active:scale-95 transition-transform duration-300">
-                <img src={tool.icon} alt={tool.name} className="w-[85%] h-[85%] object-contain" />
-              </div>
-              <span className={`font-semibold text-sm md:text-base tracking-tight ${isDark ? 'text-white' : 'text-black'}`} style={{ fontFamily: "'Outfit', sans-serif" }}>
-                {tool.label}
-              </span>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ─── Contact Section ─── */
 
