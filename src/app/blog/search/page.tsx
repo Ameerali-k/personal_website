@@ -15,6 +15,7 @@ export default async function BlogSearchPage({ searchParams }: { searchParams: P
     const { data } = await supabase
       .from("blogs")
       .select("*")
+      .eq("is_active", true)
       .ilike("title", `%${query}%`)
       .order("created_at", { ascending: false });
       

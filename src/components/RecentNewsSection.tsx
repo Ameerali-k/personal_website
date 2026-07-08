@@ -45,6 +45,7 @@ export function RecentNewsSection() {
       const { data, error } = await supabase
         .from('blogs')
         .select('*')
+        .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(4);
 

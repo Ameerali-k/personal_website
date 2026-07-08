@@ -1,6 +1,9 @@
 import { MetadataRoute } from 'next';
 import { supabase } from '@/lib/supabase';
 
+export const revalidate = 0;
+
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Use the site URL from environment variables, fallback to production URL
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ameeralik.com';
@@ -8,14 +11,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all projects to generate dynamic routes
   const { data: projects, error: projectsError } = await supabase
     .from('projects')
-    .select('slug, updated_at, created_at');
+    .select('slug, created_at');
 
   let projectUrls: MetadataRoute.Sitemap = [];
   
   if (projects && !projectsError) {
     projectUrls = projects.map((project) => ({
       url: `${baseUrl}/projects/${project.slug}`,
-      lastModified: project.updated_at || project.created_at || new Date(),
+      lastModified: project.created_at || new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
@@ -24,14 +27,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all blogs to generate dynamic routes
   const { data: blogs, error: blogsError } = await supabase
     .from('blogs')
-    .select('slug, updated_at, created_at');
+    .select('slug, created_at')
+    .eq('is_active', true);
 
   let blogUrls: MetadataRoute.Sitemap = [];
   
   if (blogs && !blogsError) {
     blogUrls = blogs.map((blog) => ({
       url: `${baseUrl}/blog/${blog.slug}`,
-      lastModified: blog.updated_at || blog.created_at || new Date(),
+      lastModified: blog.created_at || new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
@@ -44,6 +48,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/projects`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
     }
   ];
 

@@ -22,6 +22,7 @@ export default function AdminBlogs() {
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
+  const [isActive, setIsActive] = useState(true);
 
   // Thumbnail State
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -83,6 +84,7 @@ export default function AdminBlogs() {
     setSlug(blog.slug || "");
     setDescription(blog.description);
     setContent(blog.content);
+    setIsActive(blog.is_active !== false);
     setExistingThumbnailUrl(blog.image_url || "");
     setThumbnailPreview(blog.image_url || "");
     setIsModalOpen(true);
@@ -94,6 +96,7 @@ export default function AdminBlogs() {
     setSlug("");
     setDescription("");
     setContent("");
+    setIsActive(true);
     setThumbnail(null);
     setThumbnailPreview(null);
     setExistingThumbnailUrl("");
@@ -168,7 +171,8 @@ export default function AdminBlogs() {
         description,
         content,
         image_url: finalThumbnailUrl,
-        slug: finalSlug
+        slug: finalSlug,
+        is_active: isActive
       };
 
       if (editingId) {
@@ -284,6 +288,18 @@ export default function AdminBlogs() {
               >
                 <div className="aspect-video relative overflow-hidden bg-black/40">
                   <img src={blog.image_url || "/branding.svg"} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  
+                  {/* Status Badge */}
+                  <div className="absolute top-3 right-3 z-10">
+                    <span className={`px-2.5 py-1 text-[10px] font-bold rounded-lg backdrop-blur-md border ${
+                      blog.is_active !== false 
+                        ? 'bg-[#00ff00]/20 text-[#00ff00] border-[#00ff00]/30' 
+                        : 'bg-red-500/20 text-red-400 border-red-500/30'
+                    }`}>
+                      {blog.is_active !== false ? 'Active' : 'Disabled'}
+                    </span>
+                  </div>
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4 md:p-6 gap-3">
                     <button
                       onClick={() => handleEdit(blog)}
@@ -388,6 +404,20 @@ export default function AdminBlogs() {
                 <div className="space-y-2">
                   <label className="text-xs md:text-sm font-medium text-white/60 ml-1">Full Content</label>
                   <textarea required value={content} onChange={(e) => setContent(e.target.value)} rows={6} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-2.5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-[#00ff00]/50" />
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl">
+                  <div>
+                    <p className="text-sm font-medium text-white">Status</p>
+                    <p className="text-xs text-white/50">Determine if this blog is visible on the website</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsActive(!isActive)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isActive ? 'bg-[#00ff00]' : 'bg-white/20'}`}
+                  >
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-black transition-transform ${isActive ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
                 </div>
 
                 <button type="submit" disabled={isSubmitting || (!thumbnailPreview && !editingId)} className="w-full bg-[#00ff00] hover:bg-[#00dd00] text-black font-bold py-3 md:py-4 rounded-xl md:rounded-2xl transition-all disabled:opacity-50">

@@ -17,6 +17,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
     .from("blogs")
     .select("*")
     .eq("slug", resolvedParams.slug)
+    .eq("is_active", true)
     .single();
 
   if (error || !blog) {
@@ -27,6 +28,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
   const { data: recentBlogs } = await supabase
     .from("blogs")
     .select("*")
+    .eq("is_active", true)
     .neq("id", blog.id)
     .order("created_at", { ascending: false })
     .limit(3);
