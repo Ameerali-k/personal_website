@@ -284,7 +284,7 @@ export default function AdminBlogs() {
 
       {/* Full-width scrollable cards area */}
       {!loading && blogs.length > 0 && (
-        <div className="w-full flex flex-row gap-4 md:gap-6 overflow-x-auto px-4 sm:px-6 md:px-12 pb-6 snap-x snap-mandatory hide-scrollbar">
+        <div className="w-full flex flex-row justify-center gap-4 md:gap-6 overflow-x-auto px-4 sm:px-6 md:px-12 pb-6 snap-x snap-mandatory hide-scrollbar">
           {blogs.map((blog) => (
             <motion.div
               layout
