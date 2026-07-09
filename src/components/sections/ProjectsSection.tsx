@@ -54,6 +54,8 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
   // We want the card to scale down slightly as we scroll further past it
   const scale = useTransform(scrollYProgress, [start, end], [1, 0.95]);
 
+  const isLinkProject = project.project_type === "link" && project.external_url;
+
   return (
     <motion.div
       style={{
@@ -65,14 +67,16 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
       className="sticky w-full max-w-[1100px] mx-auto mb-[15vh] group"
     >
       <a
-        href={`/projects/${project.slug}`}
+        href={isLinkProject ? project.external_url : `/projects/${project.slug}`}
+        target={isLinkProject ? "_blank" : undefined}
+        rel={isLinkProject ? "noopener noreferrer" : undefined}
         className={`block relative w-full lg:h-[450px] rounded-2xl overflow-hidden flex flex-col lg:flex-row border shadow-2xl transition-all duration-500 cursor-none ${isDark
           ? "bg-[#2D2D36] border-white/10"
           : "bg-[#f5f5f7] border-black/5"
           }`}
-        data-cursor-text="Explore"
+        data-cursor-text={isLinkProject ? "Visit" : "Explore"}
         data-cursor-shape="circle"
-        onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: "Explore", shape: "circle" } }))}
+        onMouseEnter={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: { text: isLinkProject ? "Visit" : "Explore", shape: "circle" } }))}
         onMouseLeave={() => typeof window !== "undefined" && window.dispatchEvent(new CustomEvent("setCursorText", { detail: "" }))}
       >
         {/* Blob Effect */}
@@ -118,7 +122,7 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
               ? "bg-gradient-to-r from-[#00ff22] to-[#00cc11] text-black shadow-[0_0_20px_rgba(0,255,0,0.3)] group-hover:shadow-[0_0_30px_rgba(0,255,0,0.5)]"
               : "bg-black text-white shadow-lg group-hover:bg-[#533fe7]"
               }`}>
-              View Project
+              {isLinkProject ? "Visit Website" : "View Project"}
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
             </div>
           </div>
@@ -128,12 +132,19 @@ function ProjectCard({ project, index, scrollYProgress, totalProjects }: { proje
         <div className={`w-full lg:w-[50%] lg:h-full flex items-center justify-center p-4 ${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'} z-10`}>
           <div className="relative w-full h-full min-h-[250px] sm:min-h-[300px] lg:min-h-0 rounded-2xl overflow-hidden">
             <Image
-              src={project.image_url || "/branding.svg"}
+              src={project.thumbnail_url || project.image_url || "/branding.svg"}
               alt={project.title}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
+            {/* External link badge for link-type projects */}
+            {isLinkProject && (
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold rounded-lg border border-white/20 z-10">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                External
+              </div>
+            )}
           </div>
         </div>
       </a>

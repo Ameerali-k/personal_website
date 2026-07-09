@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Trash2, Image as ImageIcon, X, LogOut, ExternalLink, Loader2, GripVertical } from "lucide-react";
+import { Plus, Trash2, Image as ImageIcon, X, LogOut, ExternalLink, Loader2, GripVertical, Link as LinkIcon } from "lucide-react";
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '@/lib/cropImage';
 
@@ -15,6 +15,8 @@ interface Project {
   description: string;
   image_url: string;
   slug: string;
+  project_type?: "normal" | "link";
+  external_url?: string;
 }
 
 export default function AdminProjects() {
@@ -30,6 +32,8 @@ export default function AdminProjects() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [projectType, setProjectType] = useState<"normal" | "link">("normal");
+  const [externalUrl, setExternalUrl] = useState("");
 
   // Thumbnail State
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -81,7 +85,7 @@ export default function AdminProjects() {
     const { data, error } = await supabase
       .from("projects")
       .select("*")
-      .order("created_at", { ascending: true }); // Match Home order
+      .order("created_at", { ascending: true });
 
     if (!error && data) {
       setProjects(data);
@@ -99,6 +103,8 @@ export default function AdminProjects() {
     setTitle(project.title);
     setCategory(project.category);
     setDescription(project.description);
+    setProjectType(project.project_type || "normal");
+    setExternalUrl(project.external_url || "");
     setExistingThumbnailUrl(project.thumbnail_url || project.image_url || "");
     setThumbnailPreview(project.thumbnail_url || project.image_url || "");
     setGalleryItems((project.images || []).map((url: string) => ({ type: "existing" as const, url })));
@@ -110,6 +116,8 @@ export default function AdminProjects() {
     setTitle("");
     setCategory("");
     setDescription("");
+    setProjectType("normal");
+    setExternalUrl("");
     setThumbnail(null);
     setThumbnailPreview(null);
     setExistingThumbnailUrl("");
@@ -166,7 +174,6 @@ export default function AdminProjects() {
   const removeGalleryItem = (index: number) => {
     setGalleryItems(prev => {
       const item = prev[index];
-      // Queue existing (already-uploaded) images for storage deletion on save
       if (item && item.type === "existing") {
         setRemovedStorageUrls(urls => [...urls, item.url]);
       }
@@ -193,6 +200,18 @@ export default function AdminProjects() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Validate external URL for link projects
+    if (projectType === "link" && !externalUrl.trim()) {
+      setActionError("Please enter an external URL for a Link project.");
+      setIsSubmitting(false);
+      return;
+    }
+    if (projectType === "link" && !externalUrl.startsWith("http")) {
+      setActionError("External URL must start with http:// or https://");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       let finalThumbnailUrl = existingThumbnailUrl;
@@ -235,39 +254,43 @@ export default function AdminProjects() {
         finalThumbnailUrl = publicUrl;
       }
 
-      // 2. Resolve gallery items in order (upload new ones, keep existing URLs)
+      // 2. Resolve gallery items (only for normal projects)
       const galleryUrls: string[] = [];
-      for (const item of galleryItems) {
-        if (item.type === "existing") {
-          galleryUrls.push(item.url);
-        } else {
-          const fileExt = item.file.name.split('.').pop();
-          const fileName = `gallery-${Math.random()}.${fileExt}`;
-          const filePath = `project-images/${fileName}`;
+      if (projectType === "normal") {
+        for (const item of galleryItems) {
+          if (item.type === "existing") {
+            galleryUrls.push(item.url);
+          } else {
+            const fileExt = item.file.name.split('.').pop();
+            const fileName = `gallery-${Math.random()}.${fileExt}`;
+            const filePath = `project-images/${fileName}`;
 
-          const { error: uploadError } = await supabase.storage
-            .from("projects")
-            .upload(filePath, item.file);
+            const { error: uploadError } = await supabase.storage
+              .from("projects")
+              .upload(filePath, item.file);
 
-          if (uploadError) throw uploadError;
+            if (uploadError) throw uploadError;
 
-          const { data: { publicUrl } } = supabase.storage
-            .from("projects")
-            .getPublicUrl(filePath);
+            const { data: { publicUrl } } = supabase.storage
+              .from("projects")
+              .getPublicUrl(filePath);
 
-          galleryUrls.push(publicUrl);
+            galleryUrls.push(publicUrl);
+          }
         }
       }
 
       const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
 
-      const projectData = {
+      const projectData: any = {
         title,
         category,
         description,
         thumbnail_url: finalThumbnailUrl,
         image_url: finalThumbnailUrl,
-        images: galleryUrls,
+        project_type: projectType,
+        external_url: projectType === "link" ? externalUrl.trim() : null,
+        images: projectType === "normal" ? galleryUrls : [],
         slug
       };
 
@@ -294,16 +317,13 @@ export default function AdminProjects() {
     if (!confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      // 1. Collect all storage paths to delete
       const pathsToDelete: string[] = [];
 
-      // Add thumbnail path
       if (thumbUrl) {
         const thumbName = thumbUrl.split('/').pop();
         if (thumbName) pathsToDelete.push(`project-images/${thumbName}`);
       }
 
-      // Add all gallery image paths
       if (Array.isArray(allImages)) {
         allImages.forEach(url => {
           if (url) {
@@ -313,18 +333,16 @@ export default function AdminProjects() {
         });
       }
 
-      // 2. Perform bulk delete from Supabase storage
       if (pathsToDelete.length > 0) {
         const { error: storageError } = await supabase.storage
           .from("projects")
           .remove(pathsToDelete);
 
         if (storageError) {
-          console.warn("Storage cleanup error (some files might still exist):", storageError.message);
+          console.warn("Storage cleanup error:", storageError.message);
         }
       }
 
-      // 3. Delete project record from database
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
 
@@ -334,6 +352,10 @@ export default function AdminProjects() {
       setActionError("Error deleting project. Please try again.");
     }
   };
+
+  const isSubmitDisabled = isSubmitting ||
+    (projectType === "normal" && !thumbnailPreview && !editingId) ||
+    (projectType === "link" && !thumbnailPreview && !editingId);
 
   return (
     <div className="min-h-screen bg-[#0c0e1a] text-white p-4 sm:p-6 md:p-12">
@@ -401,6 +423,13 @@ export default function AdminProjects() {
               >
                 <div className="aspect-video relative overflow-hidden bg-black/40">
                   <img src={project.thumbnail_url || project.image_url || "/branding.svg"} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  {/* Link type badge */}
+                  {project.project_type === "link" && (
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/90 backdrop-blur-sm text-white text-[10px] font-bold rounded-lg z-10">
+                      <LinkIcon size={10} />
+                      LINK
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4 md:p-6 gap-3">
                     <button
                       onClick={() => handleEdit(project)}
@@ -427,9 +456,18 @@ export default function AdminProjects() {
                         </span>
                       ))}
                     </div>
-                    <span className="text-white/30 text-[11px] md:text-xs uppercase font-bold">{project.images?.length || 0} Gallery</span>
+                    {project.project_type === "link" ? (
+                      <span className="text-blue-400 text-[11px] md:text-xs uppercase font-bold flex items-center gap-1">
+                        <LinkIcon size={10} /> External
+                      </span>
+                    ) : (
+                      <span className="text-white/30 text-[11px] md:text-xs uppercase font-bold">{project.images?.length || 0} Gallery</span>
+                    )}
                   </div>
                   <h3 className="text-lg md:text-xl font-bold mt-2 font-['Outfit'] line-clamp-1">{project.title}</h3>
+                  {project.project_type === "link" && project.external_url && (
+                    <p className="text-white/30 text-xs mt-1 truncate">{project.external_url}</p>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -460,7 +498,44 @@ export default function AdminProjects() {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-5 md:p-8 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
+              {/* ── Project Type Tab Switcher ── */}
+              <div className="px-5 md:px-8 pt-6">
+                <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setProjectType("normal")}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                      projectType === "normal"
+                        ? "bg-[#00ff00] text-black shadow-[0_0_15px_rgba(0,255,0,0.2)]"
+                        : "text-white/50 hover:text-white"
+                    }`}
+                  >
+                    <ImageIcon size={15} />
+                    Normal Project
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProjectType("link")}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                      projectType === "link"
+                        ? "bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                        : "text-white/50 hover:text-white"
+                    }`}
+                  >
+                    <LinkIcon size={15} />
+                    Link to Website
+                  </button>
+                </div>
+
+                {/* Hint text */}
+                <p className="text-white/30 text-xs mt-2 ml-1">
+                  {projectType === "normal"
+                    ? "Clicking the card will open the project detail page with your gallery."
+                    : "Clicking the card will redirect visitors directly to the external URL."}
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="p-5 md:p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                   <div className="space-y-2">
                     <label className="text-xs md:text-sm font-medium text-white/60 ml-1">Title</label>
@@ -476,6 +551,31 @@ export default function AdminProjects() {
                   <label className="text-xs md:text-sm font-medium text-white/60 ml-1">Description</label>
                   <textarea required value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 py-2.5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-[#00ff00]/50 resize-none" />
                 </div>
+
+                {/* External URL — only for link type */}
+                <AnimatePresence>
+                  {projectType === "link" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2 overflow-hidden"
+                    >
+                      <label className="text-xs md:text-sm font-medium text-blue-400 ml-1 flex items-center gap-1.5">
+                        <LinkIcon size={12} />
+                        External URL
+                      </label>
+                      <input
+                        type="url"
+                        value={externalUrl}
+                        onChange={(e) => setExternalUrl(e.target.value)}
+                        placeholder="https://example.com/project"
+                        className="w-full bg-blue-500/5 border border-blue-500/20 rounded-xl md:rounded-2xl px-4 py-2.5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-blue-400/50 placeholder-white/20"
+                      />
+                      <p className="text-white/30 text-[11px] ml-1">Visitors will be redirected here when they click the project card.</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <div className="space-y-2">
                   <label className="text-xs md:text-sm font-medium text-[#00ff00] ml-1">Thumbnail</label>
@@ -507,59 +607,74 @@ export default function AdminProjects() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs md:text-sm font-medium text-white/60 ml-1">
-                    Gallery
-                    {galleryItems.length > 0 && (
-                      <span className="ml-2 text-white/30 font-normal">({galleryItems.length}) — drag to reorder</span>
-                    )}
-                  </label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-4">
-                    {galleryItems.map((item, i) => {
-                      const src = item.type === "existing" ? item.url : item.preview;
-                      const isDragging = dragIndex === i;
-                      const isOver = dragOverIndex === i;
-                      return (
-                        <div
-                          key={i}
-                          draggable
-                          onDragStart={() => handleDragStart(i)}
-                          onDragEnter={() => handleDragEnter(i)}
-                          onDragEnd={handleDragEnd}
-                          onDragOver={(e) => e.preventDefault()}
-                          className={`aspect-square relative rounded-lg md:rounded-xl overflow-hidden border transition-all cursor-grab active:cursor-grabbing select-none
-                            ${isDragging ? "opacity-40 scale-95" : "opacity-100 scale-100"}
-                            ${isOver && !isDragging ? "border-[#00ff00]/60 ring-2 ring-[#00ff00]/30" : "border-white/10"}`}
-                        >
-                          <img src={src} className="w-full h-full object-cover pointer-events-none" />
-                          {/* Close button */}
-                          <button
-                            type="button"
-                            onClick={() => removeGalleryItem(i)}
-                            className="absolute top-0.5 right-0.5 md:top-1 md:right-1 p-1 bg-black/70 hover:bg-red-500 rounded-full text-white transition-colors z-10"
-                            aria-label="Remove image"
-                          >
-                            <X size={10} />
-                          </button>
-                          {/* Drag handle indicator */}
-                          <div className="absolute bottom-0.5 left-0.5 md:bottom-1 md:left-1 p-0.5 bg-black/50 rounded text-white/50 pointer-events-none">
-                            <GripVertical size={10} />
-                          </div>
-                          {item.type === "existing" && (
-                            <div className="absolute bottom-0.5 right-0.5 md:bottom-1 md:right-1 w-1.5 h-1.5 rounded-full bg-[#00ff00]/60" title="Saved" />
-                          )}
+                {/* Gallery — only shown for normal projects */}
+                <AnimatePresence>
+                  {projectType === "normal" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2 overflow-hidden"
+                    >
+                      <label className="text-xs md:text-sm font-medium text-white/60 ml-1">
+                        Gallery
+                        {galleryItems.length > 0 && (
+                          <span className="ml-2 text-white/30 font-normal">({galleryItems.length}) — drag to reorder</span>
+                        )}
+                      </label>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 md:gap-4">
+                        {galleryItems.map((item, i) => {
+                          const src = item.type === "existing" ? item.url : item.preview;
+                          const isDragging = dragIndex === i;
+                          const isOver = dragOverIndex === i;
+                          return (
+                            <div
+                              key={i}
+                              draggable
+                              onDragStart={() => handleDragStart(i)}
+                              onDragEnter={() => handleDragEnter(i)}
+                              onDragEnd={handleDragEnd}
+                              onDragOver={(e) => e.preventDefault()}
+                              className={`aspect-square relative rounded-lg md:rounded-xl overflow-hidden border transition-all cursor-grab active:cursor-grabbing select-none
+                                ${isDragging ? "opacity-40 scale-95" : "opacity-100 scale-100"}
+                                ${isOver && !isDragging ? "border-[#00ff00]/60 ring-2 ring-[#00ff00]/30" : "border-white/10"}`}
+                            >
+                              <img src={src} className="w-full h-full object-cover pointer-events-none" />
+                              <button
+                                type="button"
+                                onClick={() => removeGalleryItem(i)}
+                                className="absolute top-0.5 right-0.5 md:top-1 md:right-1 p-1 bg-black/70 hover:bg-red-500 rounded-full text-white transition-colors z-10"
+                                aria-label="Remove image"
+                              >
+                                <X size={10} />
+                              </button>
+                              <div className="absolute bottom-0.5 left-0.5 md:bottom-1 md:left-1 p-0.5 bg-black/50 rounded text-white/50 pointer-events-none">
+                                <GripVertical size={10} />
+                              </div>
+                              {item.type === "existing" && (
+                                <div className="absolute bottom-0.5 right-0.5 md:bottom-1 md:right-1 w-1.5 h-1.5 rounded-full bg-[#00ff00]/60" title="Saved" />
+                              )}
+                            </div>
+                          );
+                        })}
+                        <div className="aspect-square relative cursor-pointer border border-dashed border-white/20 rounded-lg md:rounded-xl flex items-center justify-center hover:bg-white/5 transition-colors">
+                          <input type="file" multiple accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                          <Plus size={18} className="text-white/20" />
                         </div>
-                      );
-                    })}
-                    {/* Add more images */}
-                    <div className="aspect-square relative cursor-pointer border border-dashed border-white/20 rounded-lg md:rounded-xl flex items-center justify-center hover:bg-white/5 transition-colors">
-                      <input type="file" multiple accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
-                      <Plus size={18} className="text-white/20" />
-                    </div>
-                  </div>
-                </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                <button type="submit" disabled={isSubmitting || (!thumbnailPreview && !editingId)} className="w-full bg-[#00ff00] hover:bg-[#00dd00] text-black font-bold py-3 md:py-4 rounded-xl md:rounded-2xl transition-all disabled:opacity-50">
+                <button
+                  type="submit"
+                  disabled={isSubmitDisabled}
+                  className={`w-full font-bold py-3 md:py-4 rounded-xl md:rounded-2xl transition-all disabled:opacity-50 ${
+                    projectType === "link"
+                      ? "bg-blue-500 hover:bg-blue-400 text-white"
+                      : "bg-[#00ff00] hover:bg-[#00dd00] text-black"
+                  }`}
+                >
                   {isSubmitting ? <Loader2 className="animate-spin m-auto" size={20} /> : (editingId ? "Update" : "Save")}
                 </button>
               </form>
