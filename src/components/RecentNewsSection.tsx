@@ -91,7 +91,7 @@ export function RecentNewsSection() {
         ) : blogs.length === 0 ? (
           <div className="text-black dark:text-white opacity-50">No recent news found.</div>
         ) : (
-          <div className="w-full flex flex-row justify-center gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-8 hide-scrollbar px-6 md:px-12">
+          <div className="w-full flex flex-row justify-start md:justify-center gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-8 hide-scrollbar px-6 md:px-12">
             {blogs.map((item, index) => (
               <Link href={`/blog/${item.slug}`} key={item.id} className="block group">
                 <motion.div

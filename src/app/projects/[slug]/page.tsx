@@ -299,11 +299,10 @@ export default function ProjectPage() {
 
               <div className="w-full flex justify-center">
                 <button
-                  className={`w-full max-w-[90%] py-[10px] border rounded-full font-semibold text-[13px] flex items-center justify-center gap-2 transition-all duration-300 ${
-                    isCopied
+                  className={`w-full max-w-[90%] py-[10px] border rounded-full font-semibold text-[13px] flex items-center justify-center gap-2 transition-all duration-300 ${isCopied
                       ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00a800]"
                       : "border-gray-300 text-black hover:bg-gray-50"
-                  }`}
+                    }`}
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
                     setIsCopied(true);
