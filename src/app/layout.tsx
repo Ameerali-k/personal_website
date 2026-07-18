@@ -5,24 +5,24 @@ import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
   title: {
-    default: "Ameerali | Graphic Designer & Web Developer",
-    template: "%s | Ameerali"
+    default: "Freelance Graphic Designer & Web Developer | Ameer Alik",
+    template: "%s | Ameer Alik"
   },
-  description: "Ameerali is a creative graphic designer and web developer specializing in branding, UI/UX design, and crafting engaging digital experiences.",
+  description: "Freelance graphic designer and web developer creating standout brands and fast, modern websites. View my portfolio and get a free quote today.",
   keywords: ["Graphic Designer", "Web Developer", "UI/UX Design", "Branding", "Ameerali", "Portfolio", "Front-end Developer", "Creative Designer"],
   authors: [{ name: "Ameerali" }],
   creator: "Ameerali",
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "Ameerali | Graphic Designer & Web Developer",
-    description: "Creative graphic designer and web developer specializing in branding, UI/UX design, and digital experiences.",
-    siteName: "Ameerali Portfolio",
+    title: "Freelance Graphic Designer & Web Developer | Ameer Alik",
+    description: "Freelance graphic designer and web developer creating standout brands and fast, modern websites. View my portfolio and get a free quote today.",
+    siteName: "Ameer Alik — Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ameerali | Graphic Designer & Web Developer",
-    description: "Creative graphic designer and web developer specializing in branding, UI/UX design, and digital experiences.",
+    title: "Freelance Graphic Designer & Web Developer | Ameer Alik",
+    description: "Freelance graphic designer and web developer creating standout brands and fast, modern websites. View my portfolio and get a free quote today.",
   },
   robots: {
     index: true,
