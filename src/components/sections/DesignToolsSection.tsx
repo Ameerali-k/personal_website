@@ -34,6 +34,9 @@ const toolsList = [
   { name: "My SQL", icon: "/mysql.svg", label: "My SQL" },
   { name: "Canva", icon: "/Canva.svg", label: "Canva" },
   { name: "Figma", icon: "/Figma.svg", label: "Figma" },
+  { name: "Claude", icon: "/claude-seeklogo.svg", label: "Claude" },
+  { name: "Antigravity", icon: "/antigravity-color.svg", label: "Antigravity" },
+  { name: "Codex GPT", icon: "/codex-color.svg", label: "Codex GPT" },
 ];
 
 function DesignToolsSection() {
