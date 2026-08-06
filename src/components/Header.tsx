@@ -9,7 +9,7 @@ export function Header() {
    const [isDark, setIsDark] = useState(true);
   const pathname = usePathname();
   const isProjectPage = pathname?.startsWith("/projects/");
-  const navLinks = ["Home", "Projects", "Services", "About"];
+  const navLinks = ["Home", "Projects", "Services", "About", "Tutorials"];
 
   useEffect(() => {
     // Initial sync
@@ -21,6 +21,12 @@ export function Header() {
     window.addEventListener('siteThemeChange', handler);
     return () => window.removeEventListener('siteThemeChange', handler);
   }, []);
+
+  const getHref = (link: string) => {
+    if (link === "Home") return "/#home";
+    if (link === "Tutorials") return "/tutorials";
+    return `/#${link.toLowerCase()}`;
+  };
 
   return (
     <header
@@ -40,11 +46,11 @@ export function Header() {
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-12">
+        <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
             <a
               key={link}
-              href={link === "Home" ? "/#home" : `/#${link.toLowerCase()}`}
+              href={getHref(link)}
               className={`transition-colors ${isDark ? "text-white/80 hover:text-[#00ff00]" : "text-black hover:text-[#533FE7]"}`}
               style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: "1.2rem" }}
             >
@@ -155,7 +161,7 @@ export function Header() {
                     }}
                   >
                     <a
-                      href={link === "Home" ? "/#home" : `/#${link.toLowerCase()}`}
+                      href={getHref(link)}
                       className={`text-4xl sm:text-5xl font-bold uppercase tracking-tighter ${isDark ? "text-white hover:text-[#00ff00]" : "text-black hover:text-[#533FE7]"}`}
                       style={{ fontFamily: "'Nova Square', sans-serif" }}
                       onClick={() => setMenuOpen(false)}

@@ -16,6 +16,11 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     return <>{children}</>;
   }
 
+  const isTutorial = pathname?.startsWith("/tutorials");
+  if (isTutorial) {
+    return <>{children}</>;
+  }
+
   return (
     <>
       {!pathname?.startsWith("/blog/") && <CustomCursor />}
