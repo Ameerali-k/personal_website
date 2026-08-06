@@ -16,9 +16,16 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     return <>{children}</>;
   }
 
+  const isTutorial = pathname?.startsWith("/tutorials");
   const isTutorialDetail = pathname ? /^\/tutorials\/.+/.test(pathname) : false;
-  if (isTutorialDetail) {
-    return <>{children}</>;
+
+  if (isTutorial) {
+    return (
+      <>
+        {!isTutorialDetail && <Header />}
+        {children}
+      </>
+    );
   }
 
   return (
