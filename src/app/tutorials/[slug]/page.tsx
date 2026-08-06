@@ -11,7 +11,7 @@ export default function TutorialDetailPage() {
   const slug = params?.slug as string;
   const tutorialMeta = getTutorialBySlug(slug);
 
-  const [isDark, setIsDark] = useState(false);
+
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
 
@@ -36,7 +36,21 @@ export default function TutorialDetailPage() {
     {
       num: 1,
       title: "Open the OpenCode website",
-      text: "Visit opencode.ai and locate the installation command. You can also use the command shown below.",
+      text: "",
+      node: (
+        <>
+          Visit{" "}
+          <a
+            href="https://opencode.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline hover:text-blue-700 transition"
+          >
+            opencode.ai
+          </a>{" "}
+          and locate the installation command. You can also use the command shown below.
+        </>
+      ),
       code: "curl -fsSL https://opencode.ai/install | bash",
     },
     {
@@ -62,7 +76,21 @@ export default function TutorialDetailPage() {
     {
       num: 5,
       title: "Create or sign in to your NVIDIA account",
-      text: "Go to build.nvidia.com and sign up or sign in with your NVIDIA account.",
+      text: "",
+      node: (
+        <>
+          Go to{" "}
+          <a
+            href="https://build.nvidia.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline hover:text-blue-700 transition"
+          >
+            build.nvidia.com
+          </a>{" "}
+          and sign up or sign in with your NVIDIA account.
+        </>
+      ),
     },
     {
       num: 6,
@@ -136,16 +164,14 @@ export default function TutorialDetailPage() {
 
   return (
     <div
-      className={`min-h-screen py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
-        isDark ? "bg-[#090d16] text-gray-100" : "bg-white text-gray-900"
-      }`}
+      className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-white text-gray-900"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
-      {/* Top Floating Document Toolbar (Non-printable) */}
-      <div className="max-w-4xl mx-auto mb-8 flex items-center justify-between print:hidden border-b pb-4 border-gray-200 dark:border-gray-800">
+      {/* Back Link */}
+      <div className="max-w-4xl mx-auto mb-8">
         <Link
           href="/tutorials"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-blue-600 transition"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -153,33 +179,12 @@ export default function TutorialDetailPage() {
           </svg>
           Back to Tutorials
         </Link>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsDark(!isDark)}
-            className="p-2 rounded-lg text-xs font-semibold border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition flex items-center gap-1.5"
-          >
-            <span>{isDark ? "☀️ Light Doc" : "🌙 Dark Doc"}</span>
-          </button>
-
-          <button
-            onClick={() => window.print()}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-1 shadow-sm"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 6 2 18 2 18 9"></polyline>
-              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-              <rect x="6" y="14" width="12" height="8"></rect>
-            </svg>
-            Print / Save PDF
-          </button>
-        </div>
       </div>
 
       {/* Main Standalone Document Container */}
       <div className="max-w-4xl mx-auto space-y-10">
         {/* Document Header Tag & Top Meta */}
-        <div className="flex justify-between items-center text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-400 border-b pb-3 border-gray-200 dark:border-gray-800">
+        <div className="flex justify-between items-center text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-400 border-b pb-3 border-gray-200">
           <span className="text-blue-600 dark:text-blue-400 font-bold">OpenCode Setup Guide</span>
           <span>OpenCode + NVIDIA Free Models</span>
         </div>
@@ -210,9 +215,7 @@ export default function TutorialDetailPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className={`grid grid-cols-2 md:grid-cols-4 rounded-xl overflow-hidden border ${
-            isDark ? "bg-[#131b2e] border-blue-900/40" : "bg-blue-50/70 border-blue-200"
-          }`}
+          className="grid grid-cols-2 md:grid-cols-4 rounded-xl overflow-hidden border bg-blue-50/70 border-blue-200"
         >
           {overviewSteps.map((step, idx) => (
             <div
@@ -236,11 +239,7 @@ export default function TutorialDetailPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className={`p-5 rounded-r-lg border-l-4 ${
-            isDark
-              ? "bg-slate-900/80 border-slate-500 text-gray-200"
-              : "bg-slate-100 border-slate-700 text-slate-900"
-          }`}
+          className="p-5 rounded-r-lg border-l-4 bg-slate-100 border-slate-700 text-slate-900"
         >
           <h4 className="font-bold text-base mb-1">Before you begin</h4>
           <p className="text-sm leading-relaxed">
@@ -274,10 +273,10 @@ export default function TutorialDetailPage() {
                 <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 text-white font-bold rounded flex items-center justify-center text-lg sm:text-xl shadow-md">
                   {step.num}
                 </div>
-                <div className="space-y-2 flex-grow">
+                <div className="space-y-2 flex-grow min-w-0">
                   <h3 className="text-lg font-bold">{step.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {step.text}
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                    {step.node ?? step.text}
                   </p>
                   {step.code && (
                     <div className="relative mt-2">
@@ -310,11 +309,7 @@ export default function TutorialDetailPage() {
 
           {/* Tip Callout Box */}
           <div
-            className={`p-5 rounded-r-lg border-l-4 ${
-              isDark
-                ? "bg-amber-950/40 border-amber-500 text-amber-100"
-                : "bg-amber-50 border-amber-500 text-amber-900"
-            }`}
+            className="p-5 rounded-r-lg border-l-4 bg-amber-50 border-amber-500 text-amber-900"
           >
             <h4 className="font-bold text-base text-amber-600 dark:text-amber-400 mb-1">Tip</h4>
             <p className="text-sm leading-relaxed">
@@ -342,10 +337,10 @@ export default function TutorialDetailPage() {
                 <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 text-white font-bold rounded flex items-center justify-center text-lg sm:text-xl shadow-md">
                   {step.num}
                 </div>
-                <div className="space-y-1 flex-grow">
+                <div className="space-y-1 flex-grow min-w-0">
                   <h3 className="text-lg font-bold">{step.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {step.text}
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                    {step.node ?? step.text}
                   </p>
                 </div>
               </div>
@@ -354,11 +349,7 @@ export default function TutorialDetailPage() {
 
           {/* Important Correction Callout Box */}
           <div
-            className={`p-5 rounded-r-lg border-l-4 ${
-              isDark
-                ? "bg-red-950/40 border-red-500 text-red-100"
-                : "bg-red-50 border-red-500 text-red-900"
-            }`}
+            className="p-5 rounded-r-lg border-l-4 bg-red-50 border-red-500 text-red-900"
           >
             <h4 className="font-bold text-base text-red-600 dark:text-red-400 mb-1">Important correction</h4>
             <p className="text-sm leading-relaxed">
@@ -409,11 +400,7 @@ export default function TutorialDetailPage() {
 
           {/* Interface Note Callout Box */}
           <div
-            className={`p-5 rounded-r-lg border-l-4 ${
-              isDark
-                ? "bg-emerald-950/40 border-emerald-500 text-emerald-100"
-                : "bg-emerald-50 border-emerald-500 text-emerald-900"
-            }`}
+            className="p-5 rounded-r-lg border-l-4 bg-emerald-50 border-emerald-500 text-emerald-900"
           >
             <h4 className="font-bold text-base text-emerald-600 dark:text-emerald-400 mb-1">Interface note</h4>
             <p className="text-sm leading-relaxed">
@@ -430,9 +417,7 @@ export default function TutorialDetailPage() {
             Quick Verification Checklist
           </h2>
           <div
-            className={`p-6 rounded-xl border space-y-3 ${
-              isDark ? "bg-[#131b2e] border-gray-800" : "bg-white border-gray-200 shadow-sm"
-            }`}
+            className="p-6 rounded-xl border space-y-3 bg-white border-gray-200 shadow-sm"
           >
             {verificationChecklist.map((item, i) => (
               <label
@@ -477,15 +462,7 @@ export default function TutorialDetailPage() {
                 {commandReference.map((ref, idx) => (
                   <tr
                     key={idx}
-                    className={`${
-                      isDark
-                        ? idx % 2 === 0
-                          ? "bg-[#0f172a]"
-                          : "bg-[#1e293b]/50"
-                        : idx % 2 === 0
-                        ? "bg-white"
-                        : "bg-gray-50"
-                    }`}
+                    className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
                   >
                     <td className="py-3.5 px-4 sm:px-6 font-mono text-blue-600 dark:text-blue-400 font-medium">
                       {ref.command}

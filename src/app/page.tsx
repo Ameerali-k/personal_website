@@ -22,6 +22,7 @@ import { ThemeContext, useTheme } from "../components/sections/ThemeContext";
 
 // Roles that cycle every 3 seconds
 const roles = [
+  "AI Engineer",
   "Graphic Designer",
   "Video Editor",
   "UI/UX Designer",
