@@ -1,11 +1,10 @@
 import { MetadataRoute } from 'next';
 import { supabase } from '@/lib/supabase';
+import { TUTORIALS } from '@/data/tutorials';
 
 export const revalidate = 0;
 
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Use the site URL from environment variables, fallback to production URL
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ameeralik.com';
 
   // Fetch all projects to generate dynamic routes
@@ -41,7 +40,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   }
 
-  // Define static routes
+  // Generate dynamic tutorial URLs from tutorials registry
+  const tutorialUrls: MetadataRoute.Sitemap = TUTORIALS.map((tutorial) => ({
+    url: `${baseUrl}/tutorials/${tutorial.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  // Define static main routes
   const routes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}`,
@@ -67,13 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/tutorials/install-opencode-and-connect-nvidia-free-models`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }
   ];
 
-  return [...routes, ...projectUrls, ...blogUrls];
+  return [...routes, ...projectUrls, ...blogUrls, ...tutorialUrls];
 }
