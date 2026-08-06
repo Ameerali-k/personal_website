@@ -54,31 +54,33 @@ export default function TutorialsIndexPage() {
           </p>
 
           {/* Search Input */}
-          <div className="pt-4 max-w-md mx-auto relative">
-            <input
-              type="text"
-              placeholder="Search tutorials..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full px-5 py-3.5 pl-11 rounded-xl text-sm border outline-none transition-all ${
-                isDark
-                  ? "bg-[#141829] border-white/10 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              }`}
-            />
-            <svg
-              className="w-5 h-5 absolute left-3.5 top-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              ></path>
-            </svg>
+          <div className="pt-4 max-w-md mx-auto">
+            <div className="relative flex items-center">
+              <svg
+                className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search tutorials..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`w-full px-5 py-3.5 pl-12 rounded-xl text-sm border outline-none transition-all ${
+                  isDark
+                    ? "bg-[#141829] border-white/10 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                }`}
+              />
+            </div>
           </div>
         </motion.div>
 
