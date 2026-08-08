@@ -347,15 +347,6 @@ export default function TutorialDetailPage() {
             ))}
           </div>
 
-          {/* Important Correction Callout Box */}
-          <div
-            className="p-5 rounded-r-lg border-l-4 bg-red-50 border-red-500 text-red-900"
-          >
-            <h4 className="font-bold text-base text-red-600 dark:text-red-400 mb-1">Important correction</h4>
-            <p className="text-sm leading-relaxed">
-              The correct term is API key, not APK. An APK is an Android application package.
-            </p>
-          </div>
         </section>
 
         <hr className="border-gray-200 dark:border-gray-800" />
