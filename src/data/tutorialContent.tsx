@@ -333,4 +333,120 @@ export const TUTORIAL_CONTENTS: Record<string, TutorialContent> = {
     completionText: "Setup complete - Your application is now configured with Agent Router for third-party inference.",
     footerTag: "Agent Router Integration | Quick Documentation",
   },
+  "cinematic-ai-clone-professional-implementation-guide": {
+    headerTag: "AI Video Guide",
+    headerMeta: "Cinematic AI Clone Workflow",
+    beforeYouBegin: (
+      <>
+        You need a video file of your subject, access to{" "}
+        <a
+          href="https://labs.google/fx/tools/flow"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline hover:text-blue-700 transition font-semibold"
+        >
+          Google Flow Labs
+        </a>{" "}
+        (which offers credits or Unlimited Free Nano Banana Pro for AI Pro plan holders), and basic video editing tools to cut raw video into chunks.
+      </>
+    ),
+    overviewSteps: [
+      { num: "01", label: "Frame Capture" },
+      { num: "02", label: "Initial Image" },
+      { num: "03", label: "Video Chunking" },
+      { num: "04", label: "Batch Gen & Continuity" },
+    ],
+    parts: [
+      {
+        title: "Part 1 - Preparation & Setup",
+        description: "Capture keyframes and access the creative studio.",
+        steps: [
+          {
+            num: 1,
+            title: "Capture the best frame from your video",
+            text: "Select and export a high-quality, clear frame from your source video (referred to as Image 1). This frame represents the desired facial expression and alignment of your subject.",
+          },
+          {
+            num: 2,
+            title: "Go to Google Flow Labs",
+            node: (
+              <>
+                Navigate to{" "}
+                <a
+                  href="https://labs.google/fx/tools/flow"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-700 transition"
+                >
+                  labs.google/fx/tools/flow
+                </a>
+                . This platform offers Unlimited Free Nano Banana Pro and a generous amount of credits to generate video. If you have a Google AI Pro plan, you will get 1k-2k monthly credits, which is perfect for continuous video generation.
+              </>
+            ),
+          },
+        ],
+      },
+      {
+        title: "Part 2 - Reference Portrait Generation",
+        description: "Generate the base cinematic portrait in Flow Labs.",
+        steps: [
+          {
+            num: 3,
+            title: "Generate the base cinematic portrait using Nano Banana Pro",
+            text: "Use Nano Banana Pro with the following prompt. Make sure to reference the captured frame (Image 1) and your target clothing source (Image 0).",
+            code: "A high-resolution cinematic portrait of the man from [Image 1], maintaining his pose and facial features, but wearing the black hoodie from [Image 0]. The flat lighting is replaced by a professional three-point setup in a dark studio. On the viewer's left, a powerful, directional edge light of a [WARM GOLD HUE] is used as a rim light, outlining his shoulder and hair. In the background on the left, the LED light tube glows with this [GOLD LIGHT]. On the viewer's right, a contrasting background light of a [DEEP ROYAL PURPLE HUE] illuminates the wall and the potted plant. His face is primarily lit by a soft, directional front key light to maintain detail, while the purple and gold colors create subtle highlights on his skin. A shallow depth of field keeps the subject sharp against the atmospheric, colored background.",
+          },
+        ],
+      },
+      {
+        title: "Part 3 - Video Processing & Continuity",
+        description: "Chunk the source video and run the generator with continuity references.",
+        steps: [
+          {
+            num: 4,
+            title: "Cut the raw video into 10-second chunks",
+            text: "Using a video editor of your choice, split your raw talking head video into 10-second chunks to ensure optimal processing and detail preservation in the generation phase.",
+          },
+          {
+            num: 5,
+            title: "Process the first chunk in Agent Mode",
+            text: "Select Google Omni Flash. Upload the first 10-second video chunk and provide the newly generated cinematic portrait as the reference image. Apply the prompt below:",
+            code: "Change the subject's clothing to a [solid black pullover hoodie]. Replace the background with a dark, professional studio setup. Implement high-definition cinematic lighting with a split color scheme: a strong, warm [orange] rim light on the subject's left side and a cool [teal/cyan] fill light on the right side. Add a soft key light perfectly illuminating the subject's face with deep, rich shadows. In the background, place a glowing vertical orange tube light on the left and a softly blurred, dark green potted plant on the right.",
+          },
+          {
+            num: 6,
+            title: "Process subsequent chunks with sequential reference",
+            text: "Repeat this process for the other video chunks. From the second chunk onwards, provide the immediately preceding generated video chunk as a visual reference to maintain perfect continuity.",
+          },
+        ],
+      },
+    ],
+    tipCallout: {
+      title: "Look Combinations",
+      text: "The key to a dynamic background is using complementary or contrasting colors. If you want to change the vibe, you can replace the [GOLD] and [PURPLE] (or [orange] and [teal]) with one of these combinations: Cyberpunk ([DEEP MAGENTA] & [ELECTRIC CYAN]), Earthly ([WARM AMBER] & [FOREST GREEN]), Classic Moody ([FIRE RED] & [DEEP BLUE]), or Soft Pastels ([SOFT PINK] & [MINT GREEN]).",
+    },
+    interfaceNoteCallout: {
+      title: "Motion & Structure Constraints",
+      text: "Preserve: Exact original facial expressions, lip-sync, eye contact, hand gestures, and head movements. Do not alter the subject's face, hair structure, or body positioning. Negative Prompt: Bright background, flat lighting, daylight, patterned clothing, striped shirt, altered motion, warping, flickering, changing identity, distorted hands.",
+    },
+    verificationChecklist: [
+      "Extracted a high-quality frame (Image 1) from the raw video.",
+      "Logged into Google Flow Labs and verified available credits.",
+      "Generated base cinematic portrait using Nano Banana Pro.",
+      "Cut raw video into 10-second segments.",
+      "First segment styled in Agent Mode referencing the generated portrait.",
+      "Subsequent segments generated referencing the prior output to maintain visual continuity.",
+    ],
+    referenceTable: {
+      headers: ["Vibe / Style Option", "Complementary Colors"],
+      rows: [
+        { col1: "Cyberpunk", col2: "[DEEP MAGENTA] & [ELECTRIC CYAN]" },
+        { col1: "Earthly", col2: "[WARM AMBER] & [FOREST GREEN]" },
+        { col1: "Classic Moody", col2: "[FIRE RED] & [DEEP BLUE]" },
+        { col1: "Soft Pastels", col2: "[SOFT PINK] & [MINT GREEN]" },
+      ],
+    },
+    completionText: "Workflow complete! Your cinematic AI clone video is fully generated with perfect style and motion consistency.",
+    footerTag: "Cinematic AI Clone Guide | Creative Lab Documentation",
+  },
 };

@@ -30,6 +30,16 @@ export const TUTORIALS: Tutorial[] = [
     date: "Aug 2026",
     featured: true,
   },
+  {
+    id: "cinematic-ai-clone",
+    slug: "cinematic-ai-clone-professional-implementation-guide",
+    category: "AI / VIDEO GEN",
+    title: "Cinematic AI Clone: Professional Implementation Guide",
+    description: "A professional workflow to generate a high-definition cinematic AI clone video from a static reference frame using Google Flow Labs.",
+    estimatedTime: "15-20 minutes",
+    date: "Aug 2026",
+    featured: true,
+  },
 ];
 
 export function getTutorialBySlug(slug: string): Tutorial | undefined {
