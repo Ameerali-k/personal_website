@@ -89,9 +89,8 @@ export default function TutorialDetailClient({
           {content.overviewSteps.map((step, idx) => (
             <div
               key={step.num}
-              className={`p-5 text-center flex flex-col justify-center items-center ${
-                idx !== content.overviewSteps.length - 1 ? "border-r border-b md:border-b-0 border-blue-200/60 dark:border-blue-900/40" : ""
-              }`}
+              className={`p-5 text-center flex flex-col justify-center items-center ${idx !== content.overviewSteps.length - 1 ? "border-r border-b md:border-b-0 border-blue-200/60 dark:border-blue-900/40" : ""
+                }`}
             >
               <span className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400">
                 {step.num}
@@ -126,7 +125,7 @@ export default function TutorialDetailClient({
         {content.parts.map((part, partIdx) => (
           <React.Fragment key={partIdx}>
             <hr className="border-gray-200 dark:border-gray-800" />
-            
+
             <section className="space-y-6">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
@@ -224,15 +223,14 @@ export default function TutorialDetailClient({
                 <input
                   type="checkbox"
                   checked={!!checkedItems[i]}
-                  onChange={() => {}}
+                  onChange={() => { }}
                   className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 />
                 <span
-                  className={`text-sm sm:text-base leading-relaxed ${
-                    checkedItems[i]
+                  className={`text-sm sm:text-base leading-relaxed ${checkedItems[i]
                       ? "line-through text-gray-400 dark:text-gray-500"
                       : "text-gray-700 dark:text-gray-200"
-                  }`}
+                    }`}
                 >
                   {item}
                 </span>

@@ -18,7 +18,7 @@ export default function TutorialShareButton({
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const firstPartDesc = content?.parts?.[0]?.description || "";
   const shareText = `${tutorialMeta.title}: ${tutorialMeta.description} ${firstPartDesc}`.trim();
-  
+
   const encodedShareUrl = encodeURIComponent(shareUrl);
   const encodedTitle = encodeURIComponent(tutorialMeta.title);
   const encodedText = encodeURIComponent(`${shareText}\n\n${shareUrl}`);
@@ -137,11 +137,10 @@ export default function TutorialShareButton({
               {/* Copy Link Button */}
               <div className="w-full flex justify-center">
                 <button
-                  className={`w-full py-2.5 border rounded-full font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
-                    isCopied
+                  className={`w-full py-2.5 border rounded-full font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 ${isCopied
                       ? "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                       : "border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                  }`}
+                    }`}
                   onClick={() => {
                     navigator.clipboard.writeText(shareUrl);
                     setIsCopied(true);

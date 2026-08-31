@@ -3,10 +3,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
-export default function BlogShareButton({ 
-  blog 
-}: { 
-  blog: { title: string; image_url: string; slug: string } 
+export default function BlogShareButton({
+  blog
+}: {
+  blog: { title: string; image_url: string; slug: string }
 }) {
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -100,11 +100,10 @@ export default function BlogShareButton({
 
               <div className="w-full flex justify-center">
                 <button
-                  className={`w-full max-w-[90%] py-[10px] border rounded-full font-semibold text-[13px] flex items-center justify-center gap-2 transition-all duration-300 ${
-                    isCopied
+                  className={`w-full max-w-[90%] py-[10px] border rounded-full font-semibold text-[13px] flex items-center justify-center gap-2 transition-all duration-300 ${isCopied
                       ? "border-[#00ff00] bg-[#00ff00]/10 text-[#00a800]"
                       : "border-gray-300 text-black hover:bg-gray-50"
-                  }`}
+                    }`}
                   onClick={() => {
                     navigator.clipboard.writeText(shareUrl);
                     setIsCopied(true);

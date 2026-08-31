@@ -40,6 +40,16 @@ export const TUTORIALS: Tutorial[] = [
     date: "Aug 2026",
     featured: true,
   },
+  {
+    id: "lovable-ai-portfolio-design",
+    slug: "design-premium-portfolio-website-lovable-ai",
+    category: "LOVABLE AI / WEB DESIGN",
+    title: "Design a Premium Personal Portfolio Website Using Lovable AI",
+    description: "A step-by-step master prompt workflow to design, structure, and animate an editorial, high-end personal portfolio website using Lovable AI.",
+    estimatedTime: "15-20 minutes",
+    date: "Aug 2026",
+    featured: true,
+  },
 ];
 
 export function getTutorialBySlug(slug: string): Tutorial | undefined {

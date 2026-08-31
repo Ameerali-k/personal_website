@@ -449,4 +449,304 @@ export const TUTORIAL_CONTENTS: Record<string, TutorialContent> = {
     completionText: "Workflow complete! Your cinematic AI clone video is fully generated with perfect style and motion consistency.",
     footerTag: "Cinematic AI Clone Guide | Creative Lab Documentation",
   },
+  "design-premium-portfolio-website-lovable-ai": {
+    headerTag: "Lovable AI Design Workflow",
+    headerMeta: "Lovable AI + Editorial Portfolio Prompt",
+    beforeYouBegin: (
+      <>
+        Prepare your resume, biography, or professional document in PDF or text format. Lovable AI will use it as the single source of truth for all portfolio content. Do not fabricate experience or qualifications.
+      </>
+    ),
+    overviewSteps: [
+      { num: "01", label: "Prompt Setup" },
+      { num: "02", label: "Visual Direction" },
+      { num: "03", label: "Structure & Motion" },
+      { num: "04", label: "Review & Deploy" },
+    ],
+    parts: [
+      {
+        title: "Part 1 - System Setup & Master Prompt Injection",
+        description: "Attach your source document and feed the 20-point master prompt into Lovable AI to establish single source-of-truth rules.",
+        steps: [
+          {
+            num: 1,
+            title: "Prepare your reference document",
+            text: "Gather your resume, biography, or professional profile. Upload this document directly to Lovable AI alongside your design request. Make sure the document includes accurate position titles, projects, tools, and social links.",
+          },
+          {
+            num: 2,
+            title: "Copy the Master Lovable AI Prompt",
+            text: "Copy the full 20-point master prompt below and paste it into the Lovable AI prompt field after uploading your reference document:",
+            code: `# Personal Portfolio Website — Design & Development Prompt
+
+Create a premium, modern, highly polished personal website using the attached document as the primary source of truth for all website content. The uploaded document may be a resume, professional profile, company profile, biography, business document, portfolio brief, or any other document containing information intended for the website.
+
+The website should feel like it was designed and developed by a professional designer/developer, NOT like a generic AI-generated portfolio template.
+
+## 1. Main Goal
+Build a personal or professional website that accurately reflects the person, business, brand, company, or organization described in the uploaded document. Determine the appropriate positioning, audience, tone, sections, and content structure from the document rather than assuming the subject is a designer, developer, entrepreneur, or job seeker.
+
+The website should immediately communicate:
+* Professionalism
+* Creativity
+* Technical ability
+* Strong visual design skills
+* Attention to detail
+* Real-world experience
+
+Do not invent experience, clients, companies, projects, awards, statistics, or qualifications. Use information from the attached resume.
+
+---
+
+## 2. Visual Direction
+Use a minimal, premium, editorial-style UI with strong typography and generous whitespace.
+
+Avoid:
+* Generic portfolio templates
+* Excessive gradients
+* Overused glassmorphism
+* Too many cards
+* Excessive rounded corners
+* Stock-looking illustrations
+* Unnecessary icons
+* Huge amounts of text
+* Random decorative elements
+
+The design should feel closer to a high-end creative studio portfolio than a typical developer portfolio.
+
+Design characteristics:
+* Clean grid system
+* Strong typography
+* Large visual hierarchy
+* Excellent spacing
+* Subtle borders
+* Smooth transitions
+* Minimal color palette
+* Strong contrast
+* Responsive layouts
+* Sophisticated micro-interactions
+
+Use a modern sans-serif typeface such as Inter, Space Grotesk, or a similar premium geometric font.
+
+---
+
+## 3. Homepage Structure
+
+### Hero Section
+Create a visually impressive hero section.
+
+Include:
+Small eyebrow text:
+GRAPHIC DESIGNER · WEB DEVELOPER · PRESENTATION DESIGNER
+
+Then display my name prominently.
+
+Create an animated headline based on my actual professional positioning.
+Example structure:
+I DESIGN DIGITAL EXPERIENCES.
+or
+DESIGN. CODE. CREATE.
+
+Use the resume to refine the wording.
+
+Hero animations:
+* Text reveal animation
+* Character/word stagger animation
+* Subtle image movement
+* Smooth entrance animations
+* Mouse-follow interaction where appropriate
+* Subtle parallax
+* Animated underline/accent
+* Smooth hover interactions
+
+Add a short professional introduction derived from the resume.
+Add CTA buttons: "View My Work", "Let's Work Together". Include a subtle scroll indicator.
+
+---
+
+## 4. Text Effects
+Use sophisticated text animations throughout the website.
+Implement several effects where appropriate:
+* Text Reveal (line-by-line when entering viewport)
+* Word Stagger (sequential appearance)
+* Character Reveal (for major headings)
+* Text Mask Reveal (clipping/masking animation)
+* Hover Text Animation (smooth text transitions on buttons/links)
+* Scramble / Decode Effect (subtle character scramble for headings/labels)
+
+---
+
+## 5. About Section
+Create a clean editorial-style About section.
+Use information from the resume.
+Possible layout:
+LEFT: Large heading: ABOUT
+RIGHT: Professional introduction and short biography.
+Add selected facts: Years of experience, Core disciplines, Technologies, Design tools.
+
+---
+
+## 6. Experience Section
+Create a premium timeline or editorial experience layout.
+Each experience should contain: Company, Position, Date, Location, Short description, Key responsibilities, Technologies/tools.
+Use a minimal timeline interaction on hover: highlight active item, slightly animate year/title, reveal additional information.
+
+---
+
+## 7. Selected Work / Projects
+Create a visually strong portfolio section using projects from the resume.
+Each project should feel like a case-study preview with large project blocks:
+Project name, Category, Short description, Tools/technologies, Visual preview, View Project CTA.
+On hover: Image scales slightly, cursor interaction, title moves subtly, arrow animates smoothly.
+
+---
+
+## 8. Skills & Tools
+Group skills logically: Design, Development, Creative Tools, AI Workflow.
+Experiment with typography lists, interactive marquee, or horizontal scrolling skill bands instead of standard cards.
+
+---
+
+## 9. Services
+Create a concise services section based on professional capabilities (Graphic Design, Web Development, Presentation Design, UI/UX).
+
+---
+
+## 10. Contact Section
+Create a visually strong final CTA.
+Large headline: HAVE A PROJECT IN MIND?
+Include Email, LinkedIn, GitHub, Portfolio links, and prominent CTA: Let's Talk →.
+
+---
+
+## 11. Navigation
+Minimal sticky navigation.
+Desktop: Logo/Name on left, links on right (About, Experience, Work, Skills, Contact) + CTA button.
+Mobile: Clean animated drawer menu.
+
+---
+
+## 12. Scroll Animations & Motion
+Use GSAP + ScrollTrigger or Framer Motion for fade-up reveals, text clipping, and image parallax. Respect prefers-reduced-motion.
+
+---
+
+## 13. Cursor Interactions
+Subtle custom cursor: expands over clickables, magnetic CTAs, custom cursor label ('VIEW' over project images).
+
+---
+
+## 14. Responsive Design & UX Requirements
+Fully responsive for Large desktop, Laptop, Tablet, Mobile. Clear visual hierarchy, strong contrast, accessible typography, keyboard navigation, visible focus states.
+
+---
+
+## 15. Technical Stack
+React, TypeScript, Tailwind CSS, GSAP / Framer Motion, Semantic HTML, modular reusable component architecture.`,
+          },
+          {
+            num: 3,
+            title: "Set core prompt constraints",
+            text: "Instruct Lovable AI to strictly enforce content boundaries: no fabricated client logos, fake metrics, dummy testimonials, or generic boilerplate cards.",
+          },
+        ],
+      },
+      {
+        title: "Part 2 - Visual Aesthetics & Architectural Foundation",
+        description: "Configure typography hierarchy, minimal color palette, grid system, and layout structure.",
+        steps: [
+          {
+            num: 4,
+            title: "Establish typography & font pairing",
+            text: "Select a high-end geometric sans-serif font such as Inter, Space Grotesk, or Outfit. Define tight tracking for bold uppercase headings and spacious leading for editorial body text.",
+          },
+          {
+            num: 5,
+            title: "Implement minimal grid & color tokens",
+            text: "Use high contrast monochromatic tones with subtle border accents (e.g. slate-900/white with 5-10% opacity borders). Avoid loud gradients or heavy shadows.",
+          },
+          {
+            num: 6,
+            title: "Build sticky navigation & drawer menu",
+            text: "Create a lightweight, minimal sticky navbar. On scroll, apply subtle background blur and border transitions. Configure a clean responsive drawer menu for mobile viewports.",
+          },
+        ],
+      },
+      {
+        title: "Part 3 - Hero, Editorial Sections & Motion Design",
+        description: "Build section components with sophisticated GSAP / Framer Motion entrance reveals.",
+        steps: [
+          {
+            num: 7,
+            title: "Design the Hero section & headline reveal",
+            text: "Add small uppercase eyebrow text indicating core disciplines. Add an animated staggered text reveal for the main positioning headline (e.g., 'I DESIGN DIGITAL EXPERIENCES').",
+          },
+          {
+            num: 8,
+            title: "Structure About & minimal Experience timeline",
+            text: "Format the About section in a 2-column editorial layout (left: large heading; right: resume bio & metrics). Create an interactive timeline for work experience with subtle hover highlights.",
+          },
+          {
+            num: 9,
+            title: "Create Case-Study Project cards & interactive Skills",
+            text: "Display projects as large asymmetric case-study previews with hover image scaling and custom magnetic cursor labels ('VIEW'). Organize skills into dynamic marquees or clean typography lists.",
+          },
+          {
+            num: 10,
+            title: "Add Contact CTA & subtle magnetic interactions",
+            text: "Construct a high-impact final contact section with large headline ('HAVE A PROJECT IN MIND?'), social links, and magnetic interactive buttons.",
+          },
+        ],
+      },
+      {
+        title: "Part 4 - Polish, Performance & Responsiveness",
+        description: "Audit responsiveness, accessibility, reduced motion settings, and export clean code.",
+        steps: [
+          {
+            num: 11,
+            title: "Enforce prefers-reduced-motion accessibility",
+            text: "Wrap all GSAP and Framer Motion animations in prefers-reduced-motion media query checks to ensure accessibility compliance.",
+          },
+          {
+            num: 12,
+            title: "Test responsive mobile layouts",
+            text: "Verify mobile viewports (375px to 768px): prevent horizontal overflows, disable complex magnetic cursors, and ensure tap targets are at least 44px.",
+          },
+          {
+            num: 13,
+            title: "Export project to GitHub / Vercel",
+            text: "Export the clean modular React/TypeScript codebase from Lovable AI to your GitHub repository and connect to Vercel/Netlify for automatic deployment.",
+          },
+        ],
+      },
+    ],
+    tipCallout: {
+      title: "Content Accuracy Rule",
+      text: "Never let the AI generate dummy experience or filler skills. Lovable AI should strictly rely on your attached document as the sole source of truth.",
+    },
+    interfaceNoteCallout: {
+      title: "Recommended Tech Stack in Lovable AI",
+      text: "Ensure Lovable AI selects React + TypeScript + Tailwind CSS with GSAP or Framer Motion for optimal animation performance and maintainable code architecture.",
+    },
+    verificationChecklist: [
+      "Attached resume/profile as the sole source of truth before prompt execution.",
+      "Imported premium geometric typography (Inter / Space Grotesk / Outfit).",
+      "Staggered text reveal and scroll-triggered animations active.",
+      "Asymmetric case-study project cards created with custom hover interaction.",
+      "Mobile navigation drawer tested without layout shift or horizontal scroll.",
+      "Pre-flight UX & performance check completed before production deployment.",
+    ],
+    referenceTable: {
+      headers: ["Prompt Component", "Design & Technical Standard"],
+      rows: [
+        { col1: "Hero Section", col2: "Eyebrow text + animated headline reveal + CTAs + parallax scroll" },
+        { col1: "Experience Timeline", col2: "Minimal editorial layout, subtle active item highlight on hover" },
+        { col1: "Selected Projects", col2: "Case-study preview block, slight image scale, magnetic cursor label" },
+        { col1: "Skills & Tools", col2: "Categorized typography list or interactive marquee (no generic grids)" },
+        { col1: "Motion & UX", col2: "GSAP / ScrollTrigger, fast & elegant, prefers-reduced-motion ready" },
+      ],
+    },
+    completionText: "Master prompt setup complete! Your Lovable AI personal portfolio website is professionally designed, structured, and ready for deployment.",
+    footerTag: "Lovable AI Web Design Guide | Portfolio Master Prompt",
+  },
 };
